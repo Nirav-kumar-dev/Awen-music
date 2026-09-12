@@ -53,6 +53,7 @@ import com.music.vivi.models.MediaMetadata
 import com.music.vivi.playback.CastConnectionHandler
 import com.music.vivi.playback.PlayerConnection
 import com.music.vivi.ui.screens.settings.DarkMode
+import com.music.vivi.ui.theme.liquidGlassEffect
 import com.music.vivi.utils.rememberEnumPreference
 import com.music.vivi.utils.rememberPreference
 import kotlinx.coroutines.launch
@@ -77,6 +78,7 @@ fun AppleMiniPlayer(
     }
     
     val miniPlayerBackground by rememberEnumPreference(MiniPlayerBackgroundStyleKey, defaultValue = PlayerBackgroundStyle.DEFAULT)
+    val liquidGlassUi by rememberPreference(LiquidGlassUiKey, defaultValue = false)
     
     // Player states
     val playbackState by playerConnection.playbackState.collectAsState()
@@ -196,9 +198,13 @@ fun AppleMiniPlayer(
 
                                 if (shouldChangeSong) {
                                     if (currentOffset > 0 && canSkipPreviousLocal) {
-                                        playerConnection.player.seekToPreviousMediaItem()
+                                        if (!playerConnection.service.manualSkipToPreviousWithCrossfade()) {
+                                            playerConnection.player.seekToPreviousMediaItem()
+                                        }
                                     } else if (currentOffset <= 0 && canSkipNextLocal) {
-                                        playerConnection.player.seekToNext()
+                                        if (!playerConnection.service.manualSkipToNextWithCrossfade()) {
+                                            playerConnection.player.seekToNext()
+                                        }
                                     }
                                 }
                                 coroutineScope.launch {
@@ -215,15 +221,23 @@ fun AppleMiniPlayer(
                 .then(if (isTabletLandscape) Modifier.width(500.dp).align(Alignment.Center) else Modifier.fillMaxWidth())
                 .height(64.dp)
                 .offset { IntOffset(offsetXAnimatable.value.roundToInt(), 0) }
-                .clip(RoundedCornerShape(8.dp)) // Apple rectangular shape with slightly rounded corners
-                .background(color = backgroundColor)
+                .liquidGlassEffect(enabled = liquidGlassUi, shape = RoundedCornerShape(8.dp), pureBlack = pureBlack && useDarkTheme)
+                .then(
+                    if (!liquidGlassUi) {
+                        Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(color = backgroundColor)
+                    } else Modifier
+                )
         ) {
             // Background Layers
-            MiniPlayerBackgroundLayer(
-                style = miniPlayerBackground,
-                mediaMetadata = mediaMetadata,
-                gradientColors = gradientColors
-            )
+            if (!liquidGlassUi) {
+                MiniPlayerBackgroundLayer(
+                    style = miniPlayerBackground,
+                    mediaMetadata = mediaMetadata,
+                    gradientColors = gradientColors
+                )
+            }
 
             // Bottom Progress Bar
             Box(

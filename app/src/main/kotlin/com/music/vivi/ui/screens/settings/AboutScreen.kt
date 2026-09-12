@@ -58,6 +58,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import androidx.navigation.NavController
 import com.music.vivi.BuildConfig
 import com.music.vivi.LocalPlayerAwareWindowInsets
@@ -123,7 +124,7 @@ fun AboutScreen(
         AppVersionTile(
             appName = stringResource(R.string.vivi_music_title),
             description = "v${BuildConfig.VERSION_NAME} • ${stringResource(if (BuildConfig.IS_NIGHTLY) R.string.build_nightly else R.string.build_stable)}",
-            onGithubClick = { uriHandler.safeOpenUri(context, "https://github.com/vivizzz007/vivi-music") }
+            onGithubClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev/TideFlow") }
         )
         
         Spacer(modifier = Modifier.height(10.dp))
@@ -135,16 +136,18 @@ fun AboutScreen(
                     title = { Text(stringResource(R.string.app_developer), color = MaterialTheme.colorScheme.primary) },
                     description = { Text(stringResource(R.string.developer_name)) },
                     leadingContent = {
-                        Image(
-                            painter = painterResource(R.drawable.dev),
+                        AsyncImage(
+                            model = "https://github.com/aaravgaming007-dev.png",
                             contentDescription = null,
+                            placeholder = painterResource(R.drawable.ic_developer_avatar),
+                            error = painterResource(R.drawable.ic_developer_avatar),
                             modifier = Modifier
-                                .size(24.dp)
-                                .clip(cookieShape),
+                                .size(28.dp)
+                                .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
                     },
-                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/vivizzz007") },
+                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev") },
                     isExternalLink = true
                 ),
                 Material3SettingsItem(
@@ -174,40 +177,11 @@ fun AboutScreen(
                             Text("...")
                         }
                     },
-                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/vivizzz007/vivi-music") },
-                    isExternalLink = true
-                ),
-                Material3SettingsItem(
-                    icon = painterResource(R.drawable.web_link),
-                    title = { Text(stringResource(R.string.website)) },
-                    onClick = { uriHandler.safeOpenUri(context, "https://vivimusic.mkmdevilmi.workers.dev/") },
-                    isExternalLink = true
-                ),
-                Material3SettingsItem(
-                    icon = painterResource(R.drawable.telegram),
-                    title = { Text(stringResource(R.string.telegram_channel)) },
-                    onClick = { uriHandler.safeOpenUri(context, "https://t.me/vivimusicapp") },
+                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev/TideFlow") },
                     isExternalLink = true
                 )
             )
         )
-//        Spacer(modifier = Modifier.height(10.dp))
-//
-//        // Collaborator Section
-//        Material3SettingsGroup(
-//            title = stringResource(R.string.collaborator_section),
-//            items = listOf(
-//                Material3SettingsItem(
-//                    icon = painterResource(R.drawable.collab),
-//                    title = { Text(stringResource(R.string.collaborator_tboyke)) },
-//                    description = { Text(stringResource(R.string.collaborator_role)) },
-//                    tintIcon = false,
-//                    iconShape = cloverShape,
-//                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/T-Boyke") }
-//                )
-//            )
-//        )
-
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -227,7 +201,7 @@ fun AboutScreen(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.license_vivi),
                     title = { Text(stringResource(R.string.license)) },
-                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/vivizzz007/vivi-music/blob/main/LICENSE") },
+                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev/TideFlow/blob/main/LICENSE") },
                     isExternalLink = true
                 ),
             )

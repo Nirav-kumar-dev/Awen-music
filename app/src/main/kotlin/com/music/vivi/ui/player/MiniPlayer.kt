@@ -117,8 +117,10 @@ import com.music.vivi.constants.PureBlackMiniPlayerKey
 import com.music.vivi.constants.SwipeSensitivityKey
 import com.music.vivi.constants.SwipeThumbnailKey
 import com.music.vivi.constants.ThumbnailCornerRadius
+import com.music.vivi.constants.LiquidGlassUiKey
 import com.music.vivi.constants.UseAppleMiniPlayerKey
 import com.music.vivi.constants.UseNewMiniPlayerDesignKey
+import com.music.vivi.ui.theme.liquidGlassEffect
 import com.music.vivi.db.entities.ArtistEntity
 import com.music.vivi.listentogether.ListenTogetherManager
 import com.music.vivi.models.MediaMetadata
@@ -282,6 +284,8 @@ private fun NewMiniPlayer(
     val onSurfaceColor = if (isDynamicBackground) Color.White else MaterialTheme.colorScheme.onSurface
     val errorColor = MaterialTheme.colorScheme.error
 
+    val liquidGlassUi by rememberPreference(LiquidGlassUiKey, defaultValue = false)
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -357,16 +361,24 @@ private fun NewMiniPlayer(
                 .then(if (isTabletLandscape) Modifier.width(500.dp).align(Alignment.Center) else Modifier.fillMaxWidth())
                 .height(64.dp)
                 .offset { IntOffset(offsetXAnimatable.value.roundToInt(), 0) }
-                .clip(RoundedCornerShape(32.dp))
-                .background(color = backgroundColor)
-                .border(1.dp, outlineColor.copy(alpha = 0.3f), RoundedCornerShape(32.dp))
+                .liquidGlassEffect(enabled = liquidGlassUi, shape = RoundedCornerShape(32.dp), pureBlack = pureBlack && useDarkTheme)
+                .then(
+                    if (!liquidGlassUi) {
+                        Modifier
+                            .clip(RoundedCornerShape(32.dp))
+                            .background(color = backgroundColor)
+                            .border(1.dp, outlineColor.copy(alpha = 0.3f), RoundedCornerShape(32.dp))
+                    } else Modifier
+                )
         ) {
             // Background Layers
-            MiniPlayerBackgroundLayer(
-                style = miniPlayerBackground,
-                mediaMetadata = mediaMetadata,
-                gradientColors = gradientColors
-            )
+            if (!liquidGlassUi) {
+                MiniPlayerBackgroundLayer(
+                    style = miniPlayerBackground,
+                    mediaMetadata = mediaMetadata,
+                    gradientColors = gradientColors
+                )
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

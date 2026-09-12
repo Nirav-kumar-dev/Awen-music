@@ -1,4 +1,5 @@
 package com.music.vivi.ui.screens.wrapped.pages
+import kotlinx.coroutines.launch
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,10 @@ import com.music.vivi.ui.screens.wrapped.components.ShapeType
 
 @Composable
 fun ConclusionPage(onClose: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val view = androidx.compose.ui.platform.LocalView.current
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
+
     Box(modifier = Modifier.fillMaxSize()) {
         AnimatedBackground(elementCount = 30, shapeTypes = listOf(ShapeType.Circle, ShapeType.Line))
         Column(
@@ -61,18 +66,61 @@ fun ConclusionPage(onClose: () -> Unit) {
                 )
             )
             Spacer(modifier = Modifier.height(48.dp))
-            Button(
-                onClick = onClose,
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-            ) {
-                Text(
-                    text = stringResource(R.string.wrapped_close),
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Button(
+                    onClick = onClose,
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                ) {
+                    Text(
+                        text = stringResource(R.string.wrapped_close),
+                        style = TextStyle(
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
+                }
+                
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            try {
+                                val bitmap = android.graphics.Bitmap.createBitmap(view.width, view.height, android.graphics.Bitmap.Config.ARGB_8888)
+                                val canvas = android.graphics.Canvas(bitmap)
+                                view.draw(canvas)
+                                
+                                val uri = com.music.vivi.utils.ComposeToImage.saveBitmapAsFile(context, bitmap, "TideFlow_Wrapped")
+                                
+                                val shareIntent = android.content.Intent().apply {
+                                    action = android.content.Intent.ACTION_SEND
+                                    putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                                    type = "image/png"
+                                    addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                context.startActivity(android.content.Intent.createChooser(shareIntent, "Share Wrapped"))
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    },
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.share),
+                        contentDescription = "Share",
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Share",
+                        style = TextStyle(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
             }
         }
     }

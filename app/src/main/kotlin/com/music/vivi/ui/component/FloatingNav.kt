@@ -54,7 +54,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.music.vivi.constants.LiquidGlassUiKey
 import com.music.vivi.ui.screens.Screens
+import com.music.vivi.ui.theme.liquidGlassEffect
+import com.music.vivi.utils.rememberPreference
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
@@ -69,6 +72,7 @@ fun FloatingNavigationBar(
     onSearchLongClick: (() -> Unit)? = null,
     bottomInset: Dp = 0.dp
 ) {
+    val (liquidGlassUi) = rememberPreference(LiquidGlassUiKey, defaultValue = false)
     val containerColor = if (pureBlack) Color.Black else MaterialTheme.colorScheme.surfaceContainer
     val outlineColor = if (pureBlack) Color(0xFF222222) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
     
@@ -90,9 +94,15 @@ fun FloatingNavigationBar(
         Row(
             modifier = Modifier
                 .height(64.dp)
-                .shadow(elevation = 6.dp, shape = CircleShape)
-                .background(containerColor, shape = CircleShape)
-                .border(width = 1.dp, color = outlineColor, shape = CircleShape)
+                .liquidGlassEffect(enabled = liquidGlassUi, shape = CircleShape, pureBlack = pureBlack)
+                .then(
+                    if (!liquidGlassUi) {
+                        Modifier
+                            .shadow(elevation = 6.dp, shape = CircleShape)
+                            .background(containerColor, shape = CircleShape)
+                            .border(width = 1.dp, color = outlineColor, shape = CircleShape)
+                    } else Modifier
+                )
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -120,9 +130,15 @@ fun FloatingNavigationBar(
         Box(
             modifier = Modifier
                 .size(64.dp)
-                .shadow(elevation = 6.dp, shape = CircleShape)
-                .background(containerColor, shape = CircleShape)
-                .border(width = 1.dp, color = outlineColor, shape = CircleShape),
+                .liquidGlassEffect(enabled = liquidGlassUi, shape = CircleShape, pureBlack = pureBlack)
+                .then(
+                    if (!liquidGlassUi) {
+                        Modifier
+                            .shadow(elevation = 6.dp, shape = CircleShape)
+                            .background(containerColor, shape = CircleShape)
+                            .border(width = 1.dp, color = outlineColor, shape = CircleShape)
+                    } else Modifier
+                ),
             contentAlignment = Alignment.Center
         ) {
             FloatingNavItem(

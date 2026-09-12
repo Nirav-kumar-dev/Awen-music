@@ -28,6 +28,7 @@ val DarkModeKey = stringPreferencesKey("darkMode")
 val PureBlackKey = booleanPreferencesKey("pureBlack")
 val PureBlackMiniPlayerKey = booleanPreferencesKey("pureBlackMiniPlayer")
 val MiniPlayerOutlineKey = booleanPreferencesKey("miniPlayerOutline")
+val LiquidGlassUiKey = booleanPreferencesKey("liquidGlassUi")
 val SelectedFontKey = stringPreferencesKey("selected_font")
 val CustomFontPathKey = stringPreferencesKey("custom_font_path")
 

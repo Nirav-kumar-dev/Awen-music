@@ -19,6 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
+import com.music.vivi.constants.LiquidGlassUiKey
+import com.music.vivi.ui.theme.liquidGlassEffect
+import com.music.vivi.utils.rememberPreference
+
 @Composable
 fun DialogBasic(
     show: Boolean,
@@ -34,6 +38,9 @@ fun DialogBasic(
 ) {
     if (!show) return
 
+    val (liquidGlassUi) = rememberPreference(LiquidGlassUiKey, defaultValue = false)
+    val dialogShape = RoundedCornerShape(28.dp)
+
     Dialog(
         onDismissRequest = {
             onDismiss()
@@ -42,10 +49,11 @@ fun DialogBasic(
         Surface(
             modifier = Modifier
                 .width(300.dp)
-                .heightIn(max = 500.dp),
-            shape = RoundedCornerShape(28.dp),
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 6.dp
+                .heightIn(max = 500.dp)
+                .liquidGlassEffect(enabled = liquidGlassUi, shape = dialogShape, elevation = 6.dp),
+            shape = dialogShape,
+            color = if (liquidGlassUi) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surface,
+            shadowElevation = if (liquidGlassUi) 0.dp else 6.dp
         ) {
             Column {
                 Text(

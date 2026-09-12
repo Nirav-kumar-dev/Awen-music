@@ -22,12 +22,12 @@ android {
     ndkVersion = "27.0.12077973"
 
     defaultConfig {
-        applicationId = "com.vivi.vivimusic"
+        applicationId = "com.tideflow.music"
         minSdk = 26
         targetSdk = 37
-        versionCode = 76
+        versionCode = 1
         val betaVersionName = project.findProperty("betaVersionName") as String?
-        versionName = betaVersionName ?: "6.0.7"
+        versionName = betaVersionName ?: "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -127,7 +127,6 @@ buildTypes {
         buildConfigField("String", "ARCHITECTURE", "\"release\"")
     }
     debug {
-        applicationIdSuffix = ".debug"
         isDebuggable = true
         signingConfig = signingConfigs.getByName("debug")
         buildConfigField("String", "ARCHITECTURE", "\"debug\"")

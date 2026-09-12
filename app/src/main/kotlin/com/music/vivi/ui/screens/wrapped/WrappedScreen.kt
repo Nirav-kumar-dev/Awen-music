@@ -194,59 +194,126 @@ fun WrappedScreenContent(navController: NavController) {
         containerColor = Color.Transparent
     ) { paddingValues ->
         WrappedBackground {
-            VerticalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { page ->
-                when (screens[page]) {
-                    is WrappedScreenType.Welcome -> WrappedIntro { scope.launch { pagerState.animateScrollToPage(page = 1) } }
-                    is WrappedScreenType.MinutesTease -> WrappedMinutesTease(
-                        messagePair = messagePair,
-                        onNavigateForward = { scope.launch { pagerState.animateScrollToPage(page = 2) } },
-                        isDataReady = state.isDataReady
-                    )
-                    is WrappedScreenType.MinutesReveal -> WrappedMinutesScreen(
-                        messagePair = messagePair, totalMinutes = state.totalMinutes,
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.MinutesReveal)
-                    )
-                    is WrappedScreenType.TotalSongs -> WrappedTotalSongsScreen(
-                        uniqueSongCount = state.uniqueSongCount,
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TotalSongs)
-                    )
-                    is WrappedScreenType.TopSongReveal -> WrappedTopSongScreen(
-                        topSong = state.topSongs.firstOrNull(),
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TopSongReveal)
-                    )
-                    is WrappedScreenType.Top5Songs -> WrappedTop5SongsScreen(
-                        topSongs = state.topSongs.take(5),
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.Top5Songs)
-                    )
-                    is WrappedScreenType.TotalAlbums -> WrappedTotalAlbumsScreen(
-                        uniqueAlbumCount = state.totalAlbums,
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TotalAlbums)
-                    )
-                    is WrappedScreenType.TopAlbumReveal -> WrappedTopAlbumScreen(
-                        topAlbum = state.topAlbum,
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TopAlbumReveal)
-                    )
-                    is WrappedScreenType.Top5Albums -> WrappedTop5AlbumsScreen(
-                        topAlbums = state.top5Albums,
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.Top5Albums)
-                    )
-                    is WrappedScreenType.TotalArtists -> WrappedTotalArtistsScreen(
-                        uniqueArtistCount = state.uniqueArtistCount,
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TotalArtists)
-                    )
-                    is WrappedScreenType.TopArtistReveal -> WrappedTopArtistScreen(
-                        topArtist = state.topArtists.firstOrNull(),
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TopArtistReveal)
-                    )
-                    is WrappedScreenType.Top5Artists -> WrappedTop5ArtistsScreen(
-                        topArtists = state.topArtists,
-                        isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.Top5Artists)
-                    )
-                    is WrappedScreenType.Playlist -> PlaylistPage()
-                    is WrappedScreenType.Conclusion -> ConclusionPage(onClose = onClose)
+            Box(modifier = Modifier.fillMaxSize()) {
+                androidx.compose.foundation.pager.HorizontalPager(
+                    state = pagerState,
+                    userScrollEnabled = false,
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                    when (screens[page]) {
+                        is WrappedScreenType.Welcome -> WrappedIntro { scope.launch { pagerState.animateScrollToPage(page = 1) } }
+                        is WrappedScreenType.MinutesTease -> WrappedMinutesTease(
+                            messagePair = messagePair,
+                            onNavigateForward = { scope.launch { pagerState.animateScrollToPage(page = 2) } },
+                            isDataReady = state.isDataReady
+                        )
+                        is WrappedScreenType.MinutesReveal -> WrappedMinutesScreen(
+                            messagePair = messagePair, totalMinutes = state.totalMinutes,
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.MinutesReveal)
+                        )
+                        is WrappedScreenType.TotalSongs -> WrappedTotalSongsScreen(
+                            uniqueSongCount = state.uniqueSongCount,
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TotalSongs)
+                        )
+                        is WrappedScreenType.TopSongReveal -> WrappedTopSongScreen(
+                            topSong = state.topSongs.firstOrNull(),
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TopSongReveal)
+                        )
+                        is WrappedScreenType.Top5Songs -> WrappedTop5SongsScreen(
+                            topSongs = state.topSongs.take(5),
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.Top5Songs)
+                        )
+                        is WrappedScreenType.TotalAlbums -> WrappedTotalAlbumsScreen(
+                            uniqueAlbumCount = state.totalAlbums,
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TotalAlbums)
+                        )
+                        is WrappedScreenType.TopAlbumReveal -> WrappedTopAlbumScreen(
+                            topAlbum = state.topAlbum,
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TopAlbumReveal)
+                        )
+                        is WrappedScreenType.Top5Albums -> WrappedTop5AlbumsScreen(
+                            topAlbums = state.top5Albums,
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.Top5Albums)
+                        )
+                        is WrappedScreenType.TotalArtists -> WrappedTotalArtistsScreen(
+                            uniqueArtistCount = state.uniqueArtistCount,
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TotalArtists)
+                        )
+                        is WrappedScreenType.TopArtistReveal -> WrappedTopArtistScreen(
+                            topArtist = state.topArtists.firstOrNull(),
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.TopArtistReveal)
+                        )
+                        is WrappedScreenType.Top5Artists -> WrappedTop5ArtistsScreen(
+                            topArtists = state.topArtists,
+                            isVisible = pagerState.currentPage == screens.indexOf(WrappedScreenType.Top5Artists)
+                        )
+                        is WrappedScreenType.Playlist -> PlaylistPage()
+                        is WrappedScreenType.Conclusion -> ConclusionPage(onClose = onClose)
+                    }
+                }
+                
+                // Touch gestures overlay for Story UI
+                var isPaused by remember { mutableStateOf(false) }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .androidx.compose.ui.input.pointer.pointerInput(Unit) {
+                            androidx.compose.foundation.gestures.detectTapGestures(
+                                onPress = {
+                                    isPaused = true
+                                    val tryRelease = tryAwaitRelease()
+                                    isPaused = false
+                                    if (tryRelease) {
+                                        val isRightTap = it.x > size.width / 2
+                                        scope.launch {
+                                            if (isRightTap && pagerState.currentPage < screens.size - 1) {
+                                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                            } else if (!isRightTap && pagerState.currentPage > 0) {
+                                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                )
+
+                // Segmented Progress Bars
+                androidx.compose.foundation.layout.Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = paddingValues.calculateTopPadding() + 8.dp, start = 8.dp, end = 8.dp),
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
+                ) {
+                    screens.forEachIndexed { index, _ ->
+                        val isCurrent = index == pagerState.currentPage
+                        val progress = if (index < pagerState.currentPage) 1f else if (isCurrent) {
+                            var currentProgress by remember { mutableStateOf(0f) }
+                            LaunchedEffect(isPaused) {
+                                if (!isPaused) {
+                                    val startTime = System.currentTimeMillis() - (currentProgress * 5000).toLong()
+                                    while (currentProgress < 1f && !isPaused) {
+                                        currentProgress = (System.currentTimeMillis() - startTime) / 5000f
+                                        kotlinx.coroutines.delay(16)
+                                    }
+                                    if (currentProgress >= 1f && pagerState.currentPage < screens.size - 1) {
+                                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                    }
+                                }
+                            }
+                            currentProgress.coerceIn(0f, 1f)
+                        } else 0f
+                        
+                        androidx.compose.material3.LinearProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier
+                                .weight(1f)
+                                .androidx.compose.foundation.layout.height(2.dp)
+                                .clip(androidx.compose.foundation.shape.CircleShape),
+                            color = Color.White,
+                            trackColor = Color.White.copy(alpha = 0.3f),
+                        )
+                    }
                 }
             }
         }

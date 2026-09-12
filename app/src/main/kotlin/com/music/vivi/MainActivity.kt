@@ -460,10 +460,15 @@ class MainActivity : ComponentActivity() {
             val window = this@MainActivity.window
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val layoutParams = window.attributes
+                val modes = window.windowManager.defaultDisplay.supportedModes
                 if (enableHighRefreshRate) {
-                    layoutParams.preferredDisplayModeId = 0
+                    val maxMode = modes.maxByOrNull { it.refreshRate }
+                    if (maxMode != null) {
+                        layoutParams.preferredDisplayModeId = maxMode.modeId
+                    } else {
+                        layoutParams.preferredDisplayModeId = 0
+                    }
                 } else {
-                    val modes = window.windowManager.defaultDisplay.supportedModes
                     val mode60 = modes.firstOrNull { kotlin.math.abs(it.refreshRate - 60f) < 1f }
                         ?: modes.minByOrNull { kotlin.math.abs(it.refreshRate - 60f) }
 
@@ -475,7 +480,7 @@ class MainActivity : ComponentActivity() {
             } else {
                 val params = window.attributes
                 if (enableHighRefreshRate) {
-                    params.preferredRefreshRate = 0f
+                    params.preferredRefreshRate = 120f
                 } else {
                     params.preferredRefreshRate = 60f
                 }
@@ -942,7 +947,7 @@ class MainActivity : ComponentActivity() {
 
                 val currentTitleRes = remember(navBackStackEntry) {
                     when (navBackStackEntry?.destination?.route) {
-                        Screens.Home.route -> R.string.music
+                        Screens.Home.route -> R.string.app_name
                         Screens.Search.route -> R.string.search
                         Screens.Library.route -> R.string.filter_library
                         Screens.ListenTogether.route -> R.string.together

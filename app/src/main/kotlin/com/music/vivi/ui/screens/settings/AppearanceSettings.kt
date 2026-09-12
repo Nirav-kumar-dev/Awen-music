@@ -69,6 +69,7 @@ import com.music.vivi.constants.DensityScaleKey
 import com.music.vivi.constants.DynamicThemeKey
 import com.music.vivi.constants.EnableDynamicIconKey
 import com.music.vivi.constants.EnableHighRefreshRateKey
+import com.music.vivi.constants.LiquidGlassUiKey
 import com.music.vivi.constants.EnableLyricsThumbnailPlayPauseKey
 import com.music.vivi.constants.GridItemSize
 import com.music.vivi.constants.GridItemsSizeKey
@@ -169,6 +170,10 @@ fun AppearanceSettings(
     )
     val (showAudioQualityBadge, onShowAudioQualityBadgeChange) = rememberPreference(
         ShowAudioQualityBadgeKey,
+        defaultValue = false
+    )
+    val (liquidGlassUi, onLiquidGlassUiChange) = rememberPreference(
+        LiquidGlassUiKey,
         defaultValue = false
     )
     val (selectedThemeColorInt) = rememberPreference(
@@ -1174,6 +1179,30 @@ fun AppearanceSettings(
                             )
                         },
                         onClick = { onEnableHighRefreshRateChange(!enableHighRefreshRate) }
+                    )
+                )
+
+                add(
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.palette),
+                        title = { Text(stringResource(R.string.enable_liquid_glass)) },
+                        description = { Text(stringResource(R.string.enable_liquid_glass_desc)) },
+                        trailingContent = {
+                            Switch(
+                                checked = liquidGlassUi,
+                                onCheckedChange = onLiquidGlassUiChange,
+                                thumbContent = {
+                                    Icon(
+                                        painter = painterResource(
+                                            id = if (liquidGlassUi) R.drawable.check else R.drawable.close
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize)
+                                    )
+                                }
+                            )
+                        },
+                        onClick = { onLiquidGlassUiChange(!liquidGlassUi) }
                     )
                 )
 
