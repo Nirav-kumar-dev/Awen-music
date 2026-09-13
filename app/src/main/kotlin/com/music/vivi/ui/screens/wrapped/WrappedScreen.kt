@@ -11,6 +11,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +33,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
@@ -257,14 +267,15 @@ fun WrappedScreenContent(navController: NavController) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .androidx.compose.ui.input.pointer.pointerInput(Unit) {
-                            androidx.compose.foundation.gestures.detectTapGestures(
-                                onPress = {
+                        .pointerInput(Unit) {
+                            val boxWidth = size.width
+                            detectTapGestures(
+                                onPress = { offset ->
                                     isPaused = true
                                     val tryRelease = tryAwaitRelease()
                                     isPaused = false
                                     if (tryRelease) {
-                                        val isRightTap = it.x > size.width / 2
+                                        val isRightTap = offset.x > boxWidth / 2
                                         scope.launch {
                                             if (isRightTap && pagerState.currentPage < screens.size - 1) {
                                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -279,11 +290,11 @@ fun WrappedScreenContent(navController: NavController) {
                 )
 
                 // Segmented Progress Bars
-                androidx.compose.foundation.layout.Row(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = paddingValues.calculateTopPadding() + 8.dp, start = 8.dp, end = 8.dp),
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     screens.forEachIndexed { index, _ ->
                         val isCurrent = index == pagerState.currentPage
@@ -308,7 +319,7 @@ fun WrappedScreenContent(navController: NavController) {
                             progress = { progress },
                             modifier = Modifier
                                 .weight(1f)
-                                .androidx.compose.foundation.layout.height(2.dp)
+                                .height(2.dp)
                                 .clip(androidx.compose.foundation.shape.CircleShape),
                             color = Color.White,
                             trackColor = Color.White.copy(alpha = 0.3f),
