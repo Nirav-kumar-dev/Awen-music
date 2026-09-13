@@ -100,9 +100,8 @@ cd TideFlow
 
 ## 🙏 Credits & Acknowledgements
 
-- **Maintainer & Publisher:** [Nirav Kumar (@Nirav-kumar-dev)](https://github.com/Nirav-kumar-dev)
-- **Previous Owner & Foundation:** Special credit to [Aarav Sharma (@aaravgaming007-dev)](https://github.com/aaravgaming007-dev) for the earlier foundation of TideFlow.
-- **Open-Source Base:** Built with gratitude upon the Vivi Music and InnerTune open-source communities.
+- **Developer & Maintainer:** [Nirav Kumar (@Nirav-kumar-dev)](https://github.com/Nirav-kumar-dev)
+- **Acknowledgements:** [Aarav Sharma (@aaravgaming007-dev)](https://github.com/aaravgaming007-dev) for earlier contributions, and the Vivi Music & InnerTune open-source communities.
 
 ---
 

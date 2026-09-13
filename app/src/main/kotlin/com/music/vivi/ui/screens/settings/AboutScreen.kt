@@ -133,7 +133,7 @@ fun AboutScreen(
         ExpressiveSettingGroup(
             items = listOf(
                 Material3SettingsItem(
-                    title = { Text("Publisher & Maintainer", color = MaterialTheme.colorScheme.primary) },
+                    title = { Text(stringResource(R.string.developer), color = MaterialTheme.colorScheme.primary) },
                     description = { Text("Nirav Kumar (@Nirav-kumar-dev)") },
                     leadingContent = {
                         AsyncImage(
@@ -148,24 +148,6 @@ fun AboutScreen(
                         )
                     },
                     onClick = { uriHandler.safeOpenUri(context, "https://github.com/Nirav-kumar-dev") },
-                    isExternalLink = true
-                ),
-                Material3SettingsItem(
-                    title = { Text("Original Creator & Previous Owner", color = MaterialTheme.colorScheme.primary) },
-                    description = { Text("Aarav Sharma (@aaravgaming007-dev)") },
-                    leadingContent = {
-                        AsyncImage(
-                            model = "https://github.com/aaravgaming007-dev.png",
-                            contentDescription = null,
-                            placeholder = painterResource(R.drawable.ic_developer_avatar),
-                            error = painterResource(R.drawable.ic_developer_avatar),
-                            modifier = Modifier
-                                .size(28.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    },
-                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev") },
                     isExternalLink = true
                 ),
                 Material3SettingsItem(
@@ -220,6 +202,13 @@ fun AboutScreen(
                     icon = painterResource(R.drawable.license_vivi),
                     title = { Text(stringResource(R.string.license)) },
                     onClick = { uriHandler.safeOpenUri(context, "https://github.com/Nirav-kumar-dev/TideFlow/blob/main/LICENSE") },
+                    isExternalLink = true
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.info),
+                    title = { Text("Acknowledgements") },
+                    description = { Text("Earlier foundation by Aarav Sharma") },
+                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev") },
                     isExternalLink = true
                 ),
             )
