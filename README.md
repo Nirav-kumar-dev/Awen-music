@@ -29,19 +29,19 @@ A feature-rich, open-source music streaming client for Android, powered by YouTu
 
 | **Home Screen** | **Now Playing** |
 | :---: | :---: |
-| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066550.jpg" width="250"/> | <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066549.jpg" width="250"/> |
+| <img src="https://github.com/user-attachments/assets/ff9bf8b6-16d8-4ced-be45-113629ee9d42" width="250"/> | <img src="https://github.com/user-attachments/assets/36a91b09-e5bc-41f5-9624-22cf6da7ebda" width="250"/> |
 
 | **Synchronized Lyrics** | **Library View** |
 | :---: | :---: |
-| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066552.jpg" width="250"/> | <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066554.jpg" width="250"/> |
+| <img src="https://github.com/user-attachments/assets/98a66fea-91ef-410a-bc73-f9651dc6ba24" width="250"/> | <img src="https://github.com/user-attachments/assets/013c2eed-5847-4139-8765-ca442acd8629" width="250"/> |
 
 | **Artist Profile** | **Listen Together** |
 | :---: | :---: |
-| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066553.jpg" width="250"/> | <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066555.jpg" width="250"/> |
+| <img src="https://github.com/user-attachments/assets/7d22b54c-7ff5-422d-9fdc-c7a9d31a6b8f" width="250"/> | <img src="https://github.com/user-attachments/assets/73d1550b-e80c-47f5-bfca-5c6a66c1031c" width="250"/> |
 
 | **About View** |
 | :---: |
-| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066551.jpg" width="250"/> |
+| <img src="https://github.com/user-attachments/assets/b98efcae-8a23-4bd8-8ffc-e1ce5d32426b" width="250"/> |
 
 </div>
 
