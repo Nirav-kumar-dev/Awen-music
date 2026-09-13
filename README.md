@@ -1,10 +1,10 @@
 <<<<<<< HEAD
 <div align="center">
   <a href="https://vivimusic.mkmdevilmi.workers.dev/">
-    <img src="assets/bannerofficial.png" alt="VIVI Music Banner" style="display: block; margin: 0 auto; max-width: 100%"/>
+    <img src="assets/bannerofficial.png" alt="TideFlow Music Banner" style="display: block; margin: 0 auto; max-width: 100%"/>
   </a>
   <br>
-  <h1>VIVI Music</h1>
+  <h1>TideFlow Music</h1>
   <h3>More Than Just Music — Your Ultimate Audio Experience</h3>
 
   <p>
@@ -34,7 +34,7 @@
       <p>✨ <b>VIVI</b> isn't just another music player — it's a premium, modern audio ecosystem engineered for listeners who demand more. Powered by a responsive design engine that dynamically matches your album art's color palette, VIVI completely shifts to match your aesthetic on every single beat.</p>
       <p>From stunning animated canvas visualizers to fluid physics-based micro-animations, every interaction is crafted to elevate your listening. Stream ad-free, sync karaoke lyrics, share your sound instantly, and enjoy an elegant interface designed with modern Material 3 guidelines.</p>
       <blockquote>
-        <b>🎵 Your music, your aesthetic — only with VIVI.</b>
+        <b>🎵 Your music, your aesthetic — only with TideFlow.</b>
       </blockquote>
     </td>
     <td width="40%" align="center">
