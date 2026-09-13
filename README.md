@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div align="center">
   <a href="https://vivimusic.mkmdevilmi.workers.dev/">
     <img src="assets/bannerofficial.png" alt="VIVI Music Banner" style="display: block; margin: 0 auto; max-width: 100%"/>
@@ -292,3 +293,6 @@
   <p align="center"><strong>Made with ❤️ for music lovers everywhere</strong></p>
   <p align="center">⭐ Star this repo if you enjoy VIVI Music!</p>
 </div>
+=======
+# TideFlow
+>>>>>>> fd5c3a23b7e8e748382f0294a352abe4e42b088a
