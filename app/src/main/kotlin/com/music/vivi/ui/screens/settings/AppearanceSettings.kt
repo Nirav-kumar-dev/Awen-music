@@ -150,7 +150,7 @@ fun AppearanceSettings(
 ) {
     val (dynamicTheme, onDynamicThemeChange) = rememberPreference(
         DynamicThemeKey,
-        defaultValue = true
+        defaultValue = false
     )
     val (selectedFontValue) = rememberPreference(
         SelectedFontKey,
@@ -174,7 +174,7 @@ fun AppearanceSettings(
     )
     val (liquidGlassUi, onLiquidGlassUiChange) = rememberPreference(
         LiquidGlassUiKey,
-        defaultValue = false
+        defaultValue = true
     )
     val (selectedThemeColorInt) = rememberPreference(
         SelectedThemeColorKey,
@@ -1263,7 +1263,7 @@ fun AppearanceSettings(
 
         val (pureBlackMiniPlayer, onPureBlackMiniPlayerChange) = rememberPreference(
             PureBlackMiniPlayerKey,
-            defaultValue = false
+            defaultValue = true
         )
 
         ExpressiveSettingGroup(

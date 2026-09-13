@@ -121,6 +121,7 @@ import com.music.vivi.constants.LiquidGlassUiKey
 import com.music.vivi.constants.UseAppleMiniPlayerKey
 import com.music.vivi.constants.UseNewMiniPlayerDesignKey
 import com.music.vivi.ui.theme.liquidGlassEffect
+import com.music.vivi.ui.theme.LiquidGlassPlayerBackground
 import com.music.vivi.db.entities.ArtistEntity
 import com.music.vivi.listentogether.ListenTogetherManager
 import com.music.vivi.models.MediaMetadata
@@ -207,9 +208,9 @@ private fun NewMiniPlayer(
     val playerConnection = LocalPlayerConnection.current ?: return
     
     // Theme settings - these rarely change
-    val pureBlack by rememberPreference(PureBlackMiniPlayerKey, defaultValue = false)
+    val pureBlack by rememberPreference(PureBlackMiniPlayerKey, defaultValue = true)
     val isSystemInDarkTheme = isSystemInDarkTheme()
-    val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.AUTO)
+    val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.ON)
     val useDarkTheme = remember(darkTheme, isSystemInDarkTheme) {
         if (darkTheme == DarkMode.AUTO) isSystemInDarkTheme else darkTheme == DarkMode.ON
     }
@@ -284,7 +285,7 @@ private fun NewMiniPlayer(
     val onSurfaceColor = if (isDynamicBackground) Color.White else MaterialTheme.colorScheme.onSurface
     val errorColor = MaterialTheme.colorScheme.error
 
-    val liquidGlassUi by rememberPreference(LiquidGlassUiKey, defaultValue = false)
+    val liquidGlassUi by rememberPreference(LiquidGlassUiKey, defaultValue = true)
 
     Box(
         modifier = modifier
@@ -377,6 +378,12 @@ private fun NewMiniPlayer(
                     style = miniPlayerBackground,
                     mediaMetadata = mediaMetadata,
                     gradientColors = gradientColors
+                )
+            } else {
+                LiquidGlassPlayerBackground(
+                    mediaMetadata = mediaMetadata,
+                    gradientColors = gradientColors,
+                    pureBlack = pureBlack && useDarkTheme
                 )
             }
 
@@ -638,7 +645,7 @@ private fun LegacyMiniPlayer(
     modifier: Modifier = Modifier
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
-    val pureBlack by rememberPreference(PureBlackMiniPlayerKey, defaultValue = false)
+    val pureBlack by rememberPreference(PureBlackMiniPlayerKey, defaultValue = true)
     
     val playbackState by playerConnection.playbackState.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()

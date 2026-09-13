@@ -72,7 +72,7 @@ fun FloatingNavigationBar(
     onSearchLongClick: (() -> Unit)? = null,
     bottomInset: Dp = 0.dp
 ) {
-    val (liquidGlassUi) = rememberPreference(LiquidGlassUiKey, defaultValue = false)
+    val (liquidGlassUi) = rememberPreference(LiquidGlassUiKey, defaultValue = true)
     val containerColor = if (pureBlack) Color.Black else MaterialTheme.colorScheme.surfaceContainer
     val outlineColor = if (pureBlack) Color(0xFF222222) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
     

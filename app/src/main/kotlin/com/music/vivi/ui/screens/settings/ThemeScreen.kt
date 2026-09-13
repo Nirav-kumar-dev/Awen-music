@@ -79,6 +79,7 @@ import com.music.vivi.constants.PureBlackKey
 import com.music.vivi.constants.PureBlackMiniPlayerKey
 import com.music.vivi.constants.SelectedThemeColorKey
 import com.music.vivi.ui.theme.DefaultThemeColor
+import com.music.vivi.ui.theme.DynamicThemeSentinel
 import com.music.vivi.ui.theme.vivimusicTheme
 import com.music.vivi.utils.rememberEnumPreference
 import com.music.vivi.utils.rememberPreference
@@ -117,11 +118,11 @@ val PaletteColors = listOf(
 fun ThemeScreen(
     navController: NavController,
 ) {
-    val (darkMode, onDarkModeChange) = rememberEnumPreference(DarkModeKey, DarkMode.AUTO)
-    val (pureBlack, onPureBlackChangeRaw) = rememberPreference(PureBlackKey, defaultValue = false)
+    val (darkMode, onDarkModeChange) = rememberEnumPreference(DarkModeKey, DarkMode.ON)
+    val (pureBlack, onPureBlackChangeRaw) = rememberPreference(PureBlackKey, defaultValue = true)
     val (_, onPureBlackMiniPlayerChange) = rememberPreference(
         PureBlackMiniPlayerKey,
-        defaultValue = false
+        defaultValue = true
     )
 
     val onPureBlackChange: (Boolean) -> Unit = { enabled ->
@@ -132,7 +133,7 @@ fun ThemeScreen(
         SelectedThemeColorKey,
         DefaultThemeColor.toArgb()
     )
-    val (_, onDynamicThemeChange) = rememberPreference(DynamicThemeKey, defaultValue = true)
+    val (_, onDynamicThemeChange) = rememberPreference(DynamicThemeKey, defaultValue = false)
 
     val selectedThemeColor = Color(selectedThemeColorInt)
     val configuration = LocalConfiguration.current
@@ -141,9 +142,9 @@ fun ThemeScreen(
     // Helper function to handle color selection with dynamic theme toggle
     val handleColorSelection: (Color) -> Unit = { color ->
         onSelectedThemeColorChange(color.toArgb())
-        // Enable dynamic theme only when selecting the default/dynamic color
+        // Enable dynamic theme only when selecting the dynamic sentinel
         // Disable it when selecting any other color
-        val isDynamicColor = color == DefaultThemeColor
+        val isDynamicColor = color == DynamicThemeSentinel
         onDynamicThemeChange(isDynamicColor)
     }
 
@@ -380,7 +381,7 @@ fun ThemeControls(
                 items(PaletteColors) { palette ->
                     val isDynamicPalette = palette.seedColor == Color.Transparent
                     val isSelected = if (isDynamicPalette) {
-                        selectedThemeColor == DefaultThemeColor
+                        selectedThemeColor == DynamicThemeSentinel
                     } else {
                         selectedThemeColor == palette.seedColor
                     }
@@ -389,7 +390,7 @@ fun ThemeControls(
                         palette = palette,
                         isSelected = isSelected,
                         onClick = { 
-                            val colorToSave = if (isDynamicPalette) DefaultThemeColor else palette.seedColor
+                            val colorToSave = if (isDynamicPalette) DynamicThemeSentinel else palette.seedColor
                             onSelectedThemeColorChange(colorToSave) 
                         }
                     )

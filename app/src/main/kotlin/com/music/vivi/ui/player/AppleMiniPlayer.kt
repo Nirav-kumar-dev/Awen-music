@@ -54,6 +54,7 @@ import com.music.vivi.playback.CastConnectionHandler
 import com.music.vivi.playback.PlayerConnection
 import com.music.vivi.ui.screens.settings.DarkMode
 import com.music.vivi.ui.theme.liquidGlassEffect
+import com.music.vivi.ui.theme.LiquidGlassPlayerBackground
 import com.music.vivi.utils.rememberEnumPreference
 import com.music.vivi.utils.rememberPreference
 import kotlinx.coroutines.launch
@@ -70,15 +71,15 @@ fun AppleMiniPlayer(
     val playerConnection = LocalPlayerConnection.current ?: return
     
     // Theme settings
-    val pureBlack by rememberPreference(PureBlackMiniPlayerKey, defaultValue = false)
+    val pureBlack by rememberPreference(PureBlackMiniPlayerKey, defaultValue = true)
     val isSystemInDarkTheme = isSystemInDarkTheme()
-    val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.AUTO)
+    val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.ON)
     val useDarkTheme = remember(darkTheme, isSystemInDarkTheme) {
         if (darkTheme == DarkMode.AUTO) isSystemInDarkTheme else darkTheme == DarkMode.ON
     }
     
     val miniPlayerBackground by rememberEnumPreference(MiniPlayerBackgroundStyleKey, defaultValue = PlayerBackgroundStyle.DEFAULT)
-    val liquidGlassUi by rememberPreference(LiquidGlassUiKey, defaultValue = false)
+    val liquidGlassUi by rememberPreference(LiquidGlassUiKey, defaultValue = true)
     
     // Player states
     val playbackState by playerConnection.playbackState.collectAsState()
@@ -236,6 +237,12 @@ fun AppleMiniPlayer(
                     style = miniPlayerBackground,
                     mediaMetadata = mediaMetadata,
                     gradientColors = gradientColors
+                )
+            } else {
+                LiquidGlassPlayerBackground(
+                    mediaMetadata = mediaMetadata,
+                    gradientColors = gradientColors,
+                    pureBlack = pureBlack && useDarkTheme
                 )
             }
 

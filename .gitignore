@@ -106,3 +106,8 @@ app/src/main/java/com/vivimusic/music/listentogether/proto/*
 # FFTW third-party library build artifacts
 app/src/main/cpp/vibrafp/third_party/fftw-android/
 app/src/main/cpp/vibrafp/third_party/.build-fftw/
+
+# Temporary and scratch files
+scratch/
+test_let.kts
+*.apk

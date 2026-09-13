@@ -395,7 +395,7 @@ class MainActivity : ComponentActivity() {
         downloadUtil: DownloadUtil,
         syncUtils: SyncUtils,
     ) {
-        val enableDynamicTheme by rememberPreference(DynamicThemeKey, defaultValue = true)
+        val enableDynamicTheme by rememberPreference(DynamicThemeKey, defaultValue = false)
         val enableHighRefreshRate by rememberPreference(EnableHighRefreshRateKey, defaultValue = true)
         val context = LocalContext.current
         val snackbarHostState = remember { SnackbarHostState() }
@@ -488,7 +488,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.AUTO)
+        val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.ON)
 
         val (lastSeenStarPromptVersion, setLastSeenStarPromptVersion) = rememberPreference(LastSeenStarPromptVersionKey, "")
         val (hasStarredRepo) = rememberPreference(HasStarredRepoKey, false)
@@ -505,7 +505,7 @@ class MainActivity : ComponentActivity() {
             setSystemBarAppearance(useDarkTheme)
         }
 
-        val pureBlackEnabled by rememberPreference(PureBlackKey, defaultValue = false)
+        val pureBlackEnabled by rememberPreference(PureBlackKey, defaultValue = true)
         val pureBlack = remember(pureBlackEnabled, useDarkTheme) {
             pureBlackEnabled && useDarkTheme
         }
@@ -901,6 +901,7 @@ class MainActivity : ComponentActivity() {
                         currentRoute == "listen_together_from_topbar"
                     shouldShowTopBar = currentRoute in topLevelScreens &&
                         currentRoute != "settings" &&
+                        currentRoute != Screens.Home.route &&
                         !(isListenTogetherScreen && listenTogetherInTopBar)
                 }
 

@@ -124,17 +124,35 @@ fun AboutScreen(
         AppVersionTile(
             appName = stringResource(R.string.vivi_music_title),
             description = "v${BuildConfig.VERSION_NAME} • ${stringResource(if (BuildConfig.IS_NIGHTLY) R.string.build_nightly else R.string.build_stable)}",
-            onGithubClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev/TideFlow") }
+            onGithubClick = { uriHandler.safeOpenUri(context, "https://github.com/Nirav-kumar-dev/TideFlow") }
         )
         
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Developer Section
+        // Developer & Credits Section
         ExpressiveSettingGroup(
             items = listOf(
                 Material3SettingsItem(
-                    title = { Text(stringResource(R.string.app_developer), color = MaterialTheme.colorScheme.primary) },
-                    description = { Text(stringResource(R.string.developer_name)) },
+                    title = { Text("Publisher & Maintainer", color = MaterialTheme.colorScheme.primary) },
+                    description = { Text("Nirav Kumar (@Nirav-kumar-dev)") },
+                    leadingContent = {
+                        AsyncImage(
+                            model = "https://github.com/Nirav-kumar-dev.png",
+                            contentDescription = null,
+                            placeholder = painterResource(R.drawable.ic_developer_avatar),
+                            error = painterResource(R.drawable.ic_developer_avatar),
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    },
+                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/Nirav-kumar-dev") },
+                    isExternalLink = true
+                ),
+                Material3SettingsItem(
+                    title = { Text("Original Creator & Previous Owner", color = MaterialTheme.colorScheme.primary) },
+                    description = { Text("Aarav Sharma (@aaravgaming007-dev)") },
                     leadingContent = {
                         AsyncImage(
                             model = "https://github.com/aaravgaming007-dev.png",
@@ -177,7 +195,7 @@ fun AboutScreen(
                             Text("...")
                         }
                     },
-                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev/TideFlow") },
+                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/Nirav-kumar-dev/TideFlow") },
                     isExternalLink = true
                 )
             )
@@ -201,7 +219,7 @@ fun AboutScreen(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.license_vivi),
                     title = { Text(stringResource(R.string.license)) },
-                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/aaravgaming007-dev/TideFlow/blob/main/LICENSE") },
+                    onClick = { uriHandler.safeOpenUri(context, "https://github.com/Nirav-kumar-dev/TideFlow/blob/main/LICENSE") },
                     isExternalLink = true
                 ),
             )

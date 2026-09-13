@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TideFlow 🎵 | Next-Gen AI Music Streaming for Android</title>
+    <meta name="description" content="TideFlow is an ultra-premium open-source music streaming app for Android powered by NVIDIA Nemotron 3.5 AI, liquid glass aesthetics, and ad-free YouTube Music playback.">
+    <meta name="keywords" content="TideFlow, Music Streaming, AI Music, Nemotron 3.5, Android Music Player, Open Source, Ad-Free Music, Liquid Glass, Obsidian Theme">
+    
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TideFlow — AI-Powered Music Streaming">
+    <meta property="og:description" content="Experience music reimagined with NVIDIA Nemotron 3.5 AI curation, Camera Vision playlists, and liquid glass design on Android.">
+    <meta property="og:url" content="https://Nirav-kumar-dev.github.io/TideFlow/">
+    <meta property="og:image" content="assets/screen_ai.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%236366F1'/><path d='M35 65 V35 L70 50 Z' fill='white'/></svg>">
+</head>
+<body>
+    <!-- Background Spotlight and Ambient Glow -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="glass-nav" id="main-nav">
+        <div class="nav-container">
+            <a href="#" class="brand-logo" id="brand-logo">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3V16.5C12 18.433 10.433 20 8.5 20C6.567 20 5 18.433 5 16.5C5 14.567 6.567 13 8.5 13C9.776 13 10.897 13.684 11.5 14.71" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                        <path d="M12 7L19 5V12.5C19 14.433 17.433 16 15.5 16C13.567 16 12 14.433 12 12.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="brand-text">TideFlow</span>
+                <span class="version-tag" id="nav-version">v1.0.0</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#live-stats" class="nav-link">Live Downloads</a>
+                <a href="#ai-demo" class="nav-link">Nemotron AI</a>
+                <a href="#how-to-install" class="nav-link">Install Guide</a>
+                <a href="https://github.com/Nirav-kumar-dev/TideFlow" target="_blank" rel="noopener" class="nav-github-btn" id="nav-github-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>GitHub</span>
+                    <span class="stars-badge" id="nav-stars-count">★ --</span>
+                </a>
+            </div>
+
+            <a href="#download" class="primary-btn nav-download-btn" id="nav-download-cta">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download APK</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="hero-content">
+            <div class="hero-pill-badge">
+                <span class="live-dot pulse"></span>
+                <span class="hero-pill-text">Powered by NVIDIA Nemotron 3.5 Lightning 30B</span>
+            </div>
+
+            <h1 class="hero-title">
+                Music Without Limits.<br>
+                <span class="gradient-text">Curated by Intelligence.</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                TideFlow is an ultra-premium, ad-free Android music client powered by YouTube Music.
+                Featuring conversational AI playlists, camera vision soundtracks, obsidian dark aesthetics, and Apple-inspired liquid glass UI.
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="hero-actions">
+                <a href="https://github.com/Nirav-kumar-dev/TideFlow/releases/latest" class="hero-download-btn" id="hero-download-button">
+                    <div class="btn-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9992.4482.9992.9993 0 .5511-.4482.9997-.9992.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 0 0-.1521-.5676.416.416 0 0 0-.5676.1521l-2.0223 3.503C15.5902 8.4116 13.8533 8.125 12 8.125s-3.5902.2866-5.1368.8247L4.8409 5.4467a.4161.4161 0 0 0-.5677-.1521.4157.4157 0 0 0-.1521.5676l1.9973 3.4592C2.6889 11.1867.3438 14.6589 0 18.775h24c-.3438-4.1161-2.6889-7.5883-6.1185-9.4536"/>
+                        </svg>
+                    </div>
+                    <div class="btn-text-group">
+                        <span class="btn-primary-text">Download TideFlow APK</span>
+                        <span class="btn-subtext" id="hero-apk-meta">v1.0.0 • Free • Direct from GitHub</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/Nirav-kumar-dev/TideFlow" target="_blank" rel="noopener" class="hero-secondary-btn" id="hero-github-button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>View Repository</span>
+                </a>
+            </div>
+
+            <!-- Realtime Metrics Strip -->
+            <div class="metrics-strip" id="live-stats">
+                <div class="metric-card highlight-metric">
+                    <div class="metric-header">
+                        <span class="live-indicator"><span class="pulse-dot"></span> LIVE GITHUB TRACKER</span>
+                        <button class="refresh-metric-btn" id="refresh-stats-btn" title="Refresh Live Stats">↻</button>
+                    </div>
+                    <div class="metric-number" id="total-downloads-count">Loading...</div>
+                    <div class="metric-label">Total Real-Time Downloads</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-number" id="latest-version-name">v1.0.0</div>
+                    <div class="metric-label">Latest Release Version</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-number" id="github-stars-count">★ --</div>
+                    <div class="metric-label">GitHub Community Stars</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-number">100%</div>
+                    <div class="metric-label">Ad-Free & Open Source</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone Mockup Visual Showcase -->
+        <div class="hero-visual">
+            <div class="phone-frame">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                    <img src="assets/screen_ai.png" alt="TideFlow Nemotron 3.5 AI Assistant in Action" class="app-screenshot" id="hero-app-screen">
+                    <div class="screen-overlay-badge">
+                        <div class="ai-badge-chip">
+                            <span class="ai-chip-icon">AI</span>
+                            <span>Nemotron 3.5 Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Interactive AI Preview Section -->
+    <section class="section-ai-preview" id="ai-demo">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">CONVERSATIONAL INTELLIGENCE</span>
+                <h2 class="section-title">Ask Nemotron for Any Mood or Vibe</h2>
+                <p class="section-desc">Experience how TideFlow's on-device AI transforms your thoughts into curated, playable soundtracks.</p>
+            </div>
+
+            <div class="ai-interactive-card glass-panel">
+                <div class="ai-input-bar">
+                    <input type="text" id="ai-demo-input" placeholder="Type a mood, activity, or scene... (e.g., late night cyberpunk drive)" value="Late Night Drive">
+                    <button class="ai-generate-btn" id="ai-demo-btn">
+                        <span>Curate Playlist</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+
+                <div class="ai-quick-pills">
+                    <span class="quick-pill-label">Try Moods:</span>
+                    <button class="mood-pill active" data-mood="Late Night Drive">🏎️ Late Night Drive</button>
+                    <button class="mood-pill" data-mood="Deep Focus & Code">💻 Deep Focus & Code</button>
+                    <button class="mood-pill" data-mood="Workout Beast Mode">⚡ Workout Beast Mode</button>
+                    <button class="mood-pill" data-mood="Rainy Day Melancholy">🌧️ Rainy Day Melancholy</button>
+                    <button class="mood-pill" data-mood="Cyberpunk Synthwave">🌃 Cyberpunk Synthwave</button>
+                </div>
+
+                <div class="ai-response-preview" id="ai-response-box">
+                    <div class="ai-message-bubble">
+                        <div class="ai-assistant-avatar">AI</div>
+                        <div class="ai-bubble-content">
+                            <h4 id="preview-playlist-title">Midnight Highway Reverie</h4>
+                            <p id="preview-playlist-vibe">Atmospheric synthwave and dreamy nocturnal bass tailored to your late-night journey.</p>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-preview" id="preview-tracklist">
+                        <div class="track-row">
+                            <span class="track-num">1</span>
+                            <div class="track-info">
+                                <span class="track-title">Midnight City</span>
+                                <span class="track-artist">M83</span>
+                            </div>
+                            <span class="track-status">Playable</span>
+                        </div>
+                        <div class="track-row">
+                            <span class="track-num">2</span>
+                            <div class="track-info">
+                                <span class="track-title">Nightcall</span>
+                                <span class="track-artist">Kavinsky</span>
+                            </div>
+                            <span class="track-status">Playable</span>
+                        </div>
+                        <div class="track-row">
+                            <span class="track-num">3</span>
+                            <div class="track-info">
+                                <span class="track-title">Electric Feel</span>
+                                <span class="track-artist">MGMT</span>
+                            </div>
+                            <span class="track-status">Playable</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Grid -->
+    <section class="section-features" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">ENGINEERED FOR PERFECTION</span>
+                <h2 class="section-title">Everything You Love About Music.<br>Elevated to Art.</h2>
+                <p class="section-desc">Designed with meticulous attention to detail, performance, and aesthetic elegance.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card glass-panel">
+                    <div class="feature-icon-box icon-purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <h3 class="feature-title">Nemotron 3.5 30B Music Brain</h3>
+                    <p class="feature-desc">Deeply understands your mood, queries, and preferences. Curates real songs, maps album art, and lets you stream or save entire soundtracks with one touch.</p>
+                </div>
+
+                <div class="feature-card glass-panel">
+                    <div class="feature-icon-box icon-cyan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </div>
+                    <h3 class="feature-title">Camera Vision AI Soundtracks</h3>
+                    <p class="feature-desc">Snap any scene or environment with your phone camera. TideFlow's vision pipeline decodes the lighting, colors, and atmosphere to assemble a matching playlist.</p>
+                </div>
+
+                <div class="feature-card glass-panel">
+                    <div class="feature-icon-box icon-emerald">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    </div>
+                    <h3 class="feature-title">Liquid Glass & Obsidian Dark</h3>
+                    <p class="feature-desc">Specular frosted glass surfaces on deep AMOLED obsidian black. Smooth micro-animations, diffused spotlights, and tactile haptics calibrated for pure delight.</p>
+                </div>
+
+                <div class="feature-card glass-panel">
+                    <div class="feature-icon-box icon-rose">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3 class="feature-title">Synchronized Listen Together</h3>
+                    <p class="feature-desc">Create listening rooms and stream together with friends globally in real time with synchronized playback, shared queue management, and ultra-low latency.</p>
+                </div>
+
+                <div class="feature-card glass-panel">
+                    <div class="feature-icon-box icon-amber">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <h3 class="feature-title">100% Ad-Free Streaming</h3>
+                    <p class="feature-desc">Never hear an ad again. Full access to YouTube Music’s vast library of songs, albums, and remixes with background playback and gapless transition.</p>
+                </div>
+
+                <div class="feature-card glass-panel">
+                    <div class="feature-icon-box icon-blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </div>
+                    <h3 class="feature-title">Offline Caching & Lyrics</h3>
+                    <p class="feature-desc">Automatically caches your favorite tracks for plane flights and road trips. Includes syllable-synchronized lyrics for singing along in full immersion.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation & QR Download Section -->
+    <section class="section-install" id="how-to-install">
+        <div class="section-container">
+            <div class="install-grid">
+                <div class="install-text-col">
+                    <span class="section-tag">QUICK SETUP</span>
+                    <h2 class="section-title">Install in 3 Simple Steps</h2>
+                    <p class="section-desc">TideFlow is an open-source Android package (APK). No Google account or credit card required.</p>
+
+                    <div class="step-list">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-body">
+                                <h4>Download the APK</h4>
+                                <p>Tap the download button below or scan the QR code to fetch the latest official release APK.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-body">
+                                <h4>Allow Installation</h4>
+                                <p>If prompted by Android, tap <em>Settings</em> and toggle <em>Allow from this source</em> to proceed.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-body">
+                                <h4>Launch & Enjoy</h4>
+                                <p>Open TideFlow, ask Nemotron AI for your vibe, and start streaming ad-free music immediately.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="install-card-col" id="download">
+                    <div class="qr-download-card glass-panel">
+                        <div class="qr-header">
+                            <div class="qr-title-box">
+                                <h3>Scan to Download</h3>
+                                <p>Point phone camera at code to download APK directly</p>
+                            </div>
+                            <span class="badge-android">Android 8.0+</span>
+                        </div>
+
+                        <div class="qr-display-box">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://github.com/Nirav-kumar-dev/TideFlow/releases/latest&color=ffffff&bgcolor=141724" alt="Download QR Code" class="qr-code-img" id="qr-code-img">
+                        </div>
+
+                        <div class="qr-card-actions">
+                            <a href="https://github.com/Nirav-kumar-dev/TideFlow/releases/latest" class="primary-btn full-btn" id="qr-download-button">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>Download Latest APK</span>
+                            </a>
+                            <div class="apk-version-label" id="direct-apk-info">Checking latest release...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="logo-mark">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3V16.5C12 18.433 10.433 20 8.5 20C6.567 20 5 18.433 5 16.5C5 14.567 6.567 13 8.5 13C9.776 13 10.897 13.684 11.5 14.71" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                            <path d="M12 7L19 5V12.5C19 14.433 17.433 16 15.5 16C13.567 16 12 14.433 12 12.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <span class="brand-text">TideFlow</span>
+                </div>
+                <p class="footer-tagline">Open-source AI-driven music client for Android. Maintained by Nirav Kumar. Special credit to previous owner Aarav Sharma (@aaravgaming007-dev) for the foundation.</p>
+                <div class="footer-socials">
+                    <a href="https://github.com/Nirav-kumar-dev/TideFlow" target="_blank" rel="noopener" aria-label="GitHub Repository">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    </a>
+                    <a href="https://instagram.com/aarav_sharma_sui" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 TideFlow Project. Released under GPL-3.0 License.</p>
+                <div class="footer-bottom-links">
+                    <a href="https://github.com/Nirav-kumar-dev/TideFlow/releases">Releases</a>
+                    <a href="https://github.com/Nirav-kumar-dev/TideFlow/issues">Issues</a>
+                    <a href="https://github.com/Nirav-kumar-dev/TideFlow/blob/main/LICENSE">License</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -22,6 +22,7 @@ import com.music.innertube.models.YTItem
 import com.music.innertube.models.filterExplicit
 import com.music.innertube.models.filterVideoSongs
 import com.music.innertube.models.filterYoutubeShorts
+import com.music.innertube.pages.BrowseResult
 import com.music.innertube.pages.ExplorePage
 import com.music.innertube.pages.HomePage
 import com.music.innertube.utils.completed
@@ -103,6 +104,7 @@ class HomeViewModel @Inject constructor(
     val communityPlaylists = MutableStateFlow<List<CommunityPlaylistItem>?>(null)
     val coversAndRemixes = MutableStateFlow<HomePage.Section?>(null)
     val selectedChip = MutableStateFlow<HomePage.Chip?>(null)
+    val isCategoryLoading = MutableStateFlow(false)
     private val previousHomePage = MutableStateFlow<HomePage?>(null)
 
     val allLocalItems = MutableStateFlow<List<LocalItem>>(emptyList())
@@ -770,6 +772,130 @@ class HomeViewModel @Inject constructor(
                 }
             )
             selectedChip.value = chip
+        }
+    }
+
+    fun selectCategory(categoryName: String) {
+        if (categoryName.equals("All", ignoreCase = true)) {
+            if (previousHomePage.value != null) {
+                homePage.value = previousHomePage.value
+                previousHomePage.value = null
+            }
+            selectedChip.value = null
+            isCategoryLoading.value = false
+            return
+        }
+
+        if (previousHomePage.value == null) {
+            previousHomePage.value = homePage.value
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            isCategoryLoading.value = true
+            try {
+                val hideExplicit = context.dataStore.get(HideExplicitKey, false)
+                val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false)
+                val hideYoutubeShorts = context.dataStore.get(HideYoutubeShortsKey, false)
+
+                val availableChips = previousHomePage.value?.chips ?: homePage.value?.chips
+
+                // 1. Check if home chips has a matching chip
+                val matchingChip = availableChips?.find { chip ->
+                    chip.title.equals(categoryName, ignoreCase = true) ||
+                    (categoryName.equals("Chill", true) && chip.title.contains("Relax", true)) ||
+                    (categoryName.equals("Energetic", true) && chip.title.contains("Energize", true)) ||
+                    (categoryName.equals("Ambient", true) && (chip.title.contains("Sleep", true) || chip.title.contains("Ambient", true)))
+                }
+
+                val chipEndpoint = matchingChip?.endpoint
+                val chipParams = chipEndpoint?.params
+                if (chipParams != null) {
+                    val nextSections = YouTube.home(params = chipParams).getOrNull()
+                    if (nextSections != null && nextSections.sections.isNotEmpty()) {
+                        homePage.value = nextSections.copy(
+                            chips = availableChips,
+                            sections = nextSections.sections.map { section ->
+                                section.copy(
+                                    items = section.items
+                                        .filterExplicit(hideExplicit)
+                                        .filterVideoSongs(hideVideoSongs)
+                                        .filterYoutubeShorts(hideYoutubeShorts)
+                                )
+                            }
+                        )
+                        selectedChip.value = matchingChip
+                        return@launch
+                    }
+                }
+
+                // 2. Direct verified category fallback mapping
+                val categoryMap = mapOf(
+                    "Ambient" to Pair("FEmusic_moods_and_genres_category", "ggMPOg1uX1MxaFQ3Z0JMZkN4"),
+                    "Focus" to Pair("FEmusic_home", "ggNCSgQIDBABSgQICBABSgQIDRABSgQIBxABSgQICRABSgQIDhABSgQIAxABSgQIBBABSgQIChABSgQIBhADSgQIBRAB"),
+                    "Chill" to Pair("FEmusic_home", "ggNCSgQIDBABSgQICBABSgQIDRABSgQIBxADSgQICRABSgQIDhABSgQIAxABSgQIBBABSgQIChABSgQIBhABSgQIBRAB"),
+                    "Electronic" to Pair("FEmusic_moods_and_genres_category", "ggMPOg1uX1NPTld3SDN3WGs4"),
+                    "Romance" to Pair("FEmusic_home", "ggNCSgQIDBABSgQICBABSgQIDRADSgQIBxABSgQICRABSgQIDhABSgQIAxABSgQIBBABSgQIChABSgQIBhABSgQIBRAB"),
+                    "Energetic" to Pair("FEmusic_home", "ggNCSgQIDBABSgQICBABSgQIDRABSgQIBxABSgQICRADSgQIDhABSgQIAxABSgQIBBABSgQIChABSgQIBhABSgQIBRAB"),
+                    "Workout" to Pair("FEmusic_home", "ggNCSgQIDBABSgQICBABSgQIDRABSgQIBxABSgQICRABSgQIDhABSgQIAxABSgQIBBADSgQIChABSgQIBhABSgQIBRAB"),
+                    "Party" to Pair("FEmusic_home", "ggNCSgQIDBABSgQICBABSgQIDRABSgQIBxABSgQICRABSgQIDhADSgQIAxABSgQIBBABSgQIChABSgQIBhABSgQIBRAB")
+                )
+
+                val target = categoryMap[categoryName]
+                    ?: categoryMap.entries.find { it.key.equals(categoryName, ignoreCase = true) }?.value
+
+                if (target != null) {
+                    val (browseId, params) = target
+                    if (browseId == "FEmusic_home") {
+                        val nextSections = YouTube.home(params = params).getOrNull()
+                        if (nextSections != null && nextSections.sections.isNotEmpty()) {
+                            homePage.value = nextSections.copy(
+                                chips = availableChips,
+                                sections = nextSections.sections.map { section ->
+                                    section.copy(
+                                        items = section.items
+                                            .filterExplicit(hideExplicit)
+                                            .filterVideoSongs(hideVideoSongs)
+                                            .filterYoutubeShorts(hideYoutubeShorts)
+                                    )
+                                }
+                            )
+                            selectedChip.value = HomePage.Chip(categoryName, null, null)
+                            return@launch
+                        }
+                    } else {
+                        val browseResult = YouTube.browse(browseId, params).getOrNull()
+                        if (browseResult != null && browseResult.items.isNotEmpty()) {
+                            val sections = browseResult.items.mapNotNull { item ->
+                                val filteredItems = item.items
+                                    .filterExplicit(hideExplicit)
+                                    .filterVideoSongs(hideVideoSongs)
+                                    .filterYoutubeShorts(hideYoutubeShorts)
+                                if (filteredItems.isEmpty()) null
+                                else HomePage.Section(
+                                    title = item.title ?: categoryName,
+                                    label = null,
+                                    thumbnail = null,
+                                    endpoint = null,
+                                    items = filteredItems
+                                )
+                            }
+                            if (sections.isNotEmpty()) {
+                                homePage.value = HomePage(
+                                    chips = availableChips,
+                                    sections = sections,
+                                    continuation = null
+                                )
+                                selectedChip.value = HomePage.Chip(categoryName, null, null)
+                                return@launch
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                reportException(e)
+            } finally {
+                isCategoryLoading.value = false
+            }
         }
     }
 

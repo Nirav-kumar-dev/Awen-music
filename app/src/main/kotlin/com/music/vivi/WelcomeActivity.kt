@@ -1,152 +1,72 @@
-@file:OptIn(ExperimentalTextApi::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
-
 package com.music.vivi
 
-import android.Manifest
-import android.app.NotificationManager
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
+import android.webkit.CookieManager
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.togetherWith
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import com.music.vivi.ui.theme.vivimusicTheme
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LargeFloatingActionButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
-
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
-import com.music.vivi.constants.IsFirstRunKey
-import com.music.vivi.ui.utils.safeOpenUri
+import com.music.innertube.YouTube
+import com.music.vivi.constants.*
+import com.music.vivi.firebase.FirebaseAuthService
+import com.music.vivi.ui.theme.vivimusicTheme
 import com.music.vivi.utils.dataStore
 import com.music.vivi.utils.get
-import kotlinx.coroutines.launch
-import androidx.datastore.preferences.core.edit
-import android.app.Activity
-import androidx.compose.animation.core.animateDpAsState
-import com.music.vivi.constants.AppLanguageKey
-import com.music.vivi.constants.SYSTEM_DEFAULT
-import com.music.vivi.constants.LanguageCodeToName
-import com.music.vivi.ui.component.EnumDialog
-import com.music.vivi.utils.rememberPreference
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.core.net.toUri
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.text.withStyle
+import com.music.vivi.utils.normalizeDataSyncId
 import kotlinx.coroutines.delay
-
-
-data class OnboardingPageInfo(
-    val content: @Composable (onUpdateScrollState: (Boolean) -> Unit) -> Unit
-)
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import timber.log.Timber
+import java.util.Calendar
+import kotlin.time.Duration.Companion.milliseconds
 
 class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,15 +76,6 @@ class WelcomeActivity : ComponentActivity() {
         val isFirstRun = dataStore.get(IsFirstRunKey, true)
         val forceShow = intent.getBooleanExtra("FORCE_SHOW", false)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            val appLang = dataStore.get(AppLanguageKey, SYSTEM_DEFAULT)
-            val locale = appLang
-                .takeUnless { it == SYSTEM_DEFAULT }
-                ?.let { java.util.Locale.forLanguageTag(it) }
-                ?: java.util.Locale.getDefault()
-            com.music.vivi.utils.setAppLocale(this, locale)
-        }
-
         if (!isFirstRun && !forceShow) {
             finishOnboarding()
             return
@@ -173,11 +84,8 @@ class WelcomeActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             vivimusicTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    WelcomePagerScreen(onFinished = {
+                WelcomeAuthScreen(
+                    onFinished = {
                         lifecycleScope.launch {
                             dataStore.edit { it[IsFirstRunKey] = false }
                             if (forceShow) {
@@ -186,8 +94,8 @@ class WelcomeActivity : ComponentActivity() {
                                 finishOnboarding()
                             }
                         }
-                    })
-                }
+                    }
+                )
             }
         }
     }
@@ -198,1153 +106,1243 @@ class WelcomeActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
-val GoogleSansFlex = FontFamily(
-    Font(
-        resId = com.music.vivi.R.font.plus_jakarta_sans,
-        weight = FontWeight.Normal,
-        style = FontStyle.Normal,
-        variationSettings = FontVariation.Settings(
-            FontVariation.weight(400),
-            FontVariation.width(100f),
-            FontVariation.Setting("ROND", 100f)
-        )
-    )
-)
+private enum class AuthMode {
+    SIGN_UP,
+    SIGN_IN
+}
 
 @Composable
-fun WelcomePagerScreen(onFinished: () -> Unit) {
+private fun WelcomeAuthScreen(
+    onFinished: () -> Unit
+) {
     val context = LocalContext.current
-    val uriHandler = LocalUriHandler.current
     val scope = rememberCoroutineScope()
-    val commonAnimSpec = tween<Float>(durationMillis = 200, easing = FastOutSlowInEasing)
-    val pageTransitionSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
-    val primaryColor = MaterialTheme.colorScheme.primary
 
-    val (appLanguage, onAppLanguageChange) = rememberPreference(key = AppLanguageKey, defaultValue = SYSTEM_DEFAULT)
-    var showAppLanguageDialog by rememberSaveable { mutableStateOf(false) }
-    var showFinishingTransition by remember { mutableStateOf(false) }
+    var authMode by remember { mutableStateOf(AuthMode.SIGN_UP) }
+    var currentStep by remember { mutableIntStateOf(1) } // 1..4
 
-    LaunchedEffect(showFinishingTransition) {
-        if (showFinishingTransition) {
-            delay(1200)
-            onFinished()
-        }
-    }
+    // Form states
+    var name by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
+    var birthdate by remember { mutableStateOf("") }
 
-    val topCardShape =
-        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
-    val middleCardShape = RoundedCornerShape(4.dp)
-    val bottomCardShape =
-        RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 20.dp, bottomEnd = 20.dp)
+    var email by remember { mutableStateOf("") }
 
-    val customWelcomeFontFamily = FontFamily(
-        Font(
-            resId = com.music.vivi.R.font.plus_jakarta_sans,
-            variationSettings = FontVariation.Settings(
-                FontVariation.slant(-9f),
-                FontVariation.width(111f),
-                FontVariation.weight(333),
-                FontVariation.Setting("GRAD", 100f),
-                FontVariation.Setting("ROND", 100f)
+    // Feature toggles
+    var aiSync by remember { mutableStateOf(true) }
+    var dolbyMusic by remember { mutableStateOf(true) }
+    var customPlaylist by remember { mutableStateOf(true) }
+    var equalizer by remember { mutableStateOf(true) }
+    var youtubeSync by remember { mutableStateOf(true) }
+
+    // YouTube Sync state
+    var isYoutubeConnected by remember { mutableStateOf(false) }
+    var youtubeAccountName by remember { mutableStateOf("") }
+    var youtubeChannelHandle by remember { mutableStateOf("") }
+    var showYoutubeLoginDialog by remember { mutableStateOf(false) }
+
+    // Sign In states
+    var signInIdentifier by remember { mutableStateOf("") }
+    var signInPassword by remember { mutableStateOf("") }
+    var showForgotPasswordDialog by remember { mutableStateOf(false) }
+
+    // Loading / error states
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val bgGradient = remember {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color(0xFF231B38),
+                Color(0xFF1E284A),
+                Color(0xFF181C2E),
+                Color(0xFF141724)
             )
         )
-    )
-
-    val thinHeaderStyle = TextStyle(
-        fontFamily = customWelcomeFontFamily,
-        fontSize = 48.sp
-    )
-
-    var hasNotificationPermission by remember {
-        mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            } else true
-        )
-    }
-
-    var canInstallPackages by remember {
-        mutableStateOf(
-            if (BuildConfig.FLAVOR.contains("gms") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                runCatching { context.packageManager.canRequestPackageInstalls() }.getOrDefault(false)
-            } else true
-        )
-    }
-
-    var isLastPageScrolledToEnd by remember { mutableStateOf(true) }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    hasNotificationPermission = ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    canInstallPackages = runCatching { context.packageManager.canRequestPackageInstalls() }.getOrDefault(false)
-                }
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-
-    val notificationLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            hasNotificationPermission = isGranted
-        }
-    )
-
-    val installParamsLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            canInstallPackages = runCatching { context.packageManager.canRequestPackageInstalls() }.getOrDefault(false)
-        }
-    }
-
-    val pages = listOf(
-        OnboardingPageInfo(
-            content = { _ ->
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.height(48.dp))
-
-                    RotatingShapeContainer(
-                        modifier = Modifier
-                            .size(280.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    val welcomeString = stringResource(id = com.music.vivi.R.string.welcome_to_vivi)
-                    val annotatedWelcome = remember(welcomeString, primaryColor) {
-                        buildAnnotatedString {
-                            val target = "Vivi"
-                            val index = welcomeString.indexOf(target)
-                            if (index != -1) {
-                                val prefix = welcomeString.substring(0, index).trim()
-                                append(prefix)
-                                append("\n")
-                                withStyle(
-                                    style = SpanStyle(
-                                        color = primaryColor,
-                                        fontFamily = GoogleSansFlex,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                ) {
-                                    append(target)
-                                }
-                                append(welcomeString.substring(index + target.length))
-                            } else {
-                                append(welcomeString)
-                            }
-                        }
-                    }
-
-                    Text(
-                        text = annotatedWelcome,
-                        style = thinHeaderStyle.copy(fontSize = 56.sp, lineHeight = 64.sp),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    val flavorSuffix = if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) "Gms Edition" else "Foss Edition"
-                    AssistChip(
-                        onClick = {},
-                        label = {
-                            Text(
-                                text = "$flavorSuffix v${BuildConfig.VERSION_NAME}",
-                                fontFamily = GoogleSansFlex
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.info),
-                                contentDescription = null,
-                                modifier = Modifier.size(AssistChipDefaults.IconSize)
-                            )
-                        },
-                        shape = CircleShape,
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        border = null
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    AssistChip(
-                        onClick = {},
-                        label = {
-                            Text(
-                                text = "By vividh p ashokan",
-                                fontFamily = GoogleSansFlex
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.person),
-                                contentDescription = null,
-                                modifier = Modifier.size(AssistChipDefaults.IconSize)
-                            )
-                        },
-                        shape = CircleShape,
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        border = null
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
-        ),
-        OnboardingPageInfo(
-            content = { _ ->
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.height(80.dp))
-
-                    Text(
-                        text = stringResource(com.music.vivi.R.string.perm_required),
-                        style = thinHeaderStyle,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Text(
-                        text = stringResource(com.music.vivi.R.string.perm_permissions),
-                        fontFamily = GoogleSansFlex,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        lineHeight = 56.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = stringResource(com.music.vivi.R.string.perm_intro_text),
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontFamily = GoogleSansFlex
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        PermissionCard(
-                            icon = painterResource(id = R.drawable.notification),
-                            iconColor = Color(0xFFffaee4),
-                            iconTint = Color(0xFF8d0053),
-                            title = stringResource(com.music.vivi.R.string.perm_notif_title),
-                            description = stringResource(com.music.vivi.R.string.perm_notif_desc),
-                            shape = if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) topCardShape else RoundedCornerShape(20.dp),
-                            control = {
-                                Switch(
-                                    checked = hasNotificationPermission,
-                                    onCheckedChange = {
-                                        if (hasNotificationPermission) {
-                                            val intent =
-                                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                                    putExtra(
-                                                        Settings.EXTRA_APP_PACKAGE,
-                                                        context.packageName
-                                                    )
-                                                }
-                                            context.startActivity(intent)
-                                        } else {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                            }
-                                        }
-                                    },
-                                    thumbContent = {
-                                        Icon(
-                                            painter = painterResource(if (hasNotificationPermission) R.drawable.check else R.drawable.close),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-                                )
-                            },
-                            onClick = {
-                                if (hasNotificationPermission) {
-                                    val intent =
-                                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                            putExtra(
-                                                Settings.EXTRA_APP_PACKAGE,
-                                                context.packageName
-                                            )
-                                        }
-                                    context.startActivity(intent)
-                                } else {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    }
-                                }
-                            }
-                        )
-
-                        if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) {
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            PermissionCard(
-                                icon = painterResource(id = R.drawable.update),
-                                iconColor = Color(0xFFffb683),
-                                iconTint = Color(0xFF753403),
-                                title = stringResource(com.music.vivi.R.string.perm_install_title),
-                                description = stringResource(com.music.vivi.R.string.perm_install_desc),
-                                shape = bottomCardShape,
-                                control = {
-                                    Icon(
-                                        painter = painterResource(if (canInstallPackages) R.drawable.check else R.drawable.navigate_next),
-                                        contentDescription = null,
-                                        tint = if (canInstallPackages) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                },
-                                onClick = {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        val intent =
-                                            Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                                                data = Uri.parse("package:${context.packageName}")
-                                            }
-                                        installParamsLauncher.launch(intent)
-                                    }
-                                }
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(100.dp))
-                    }
-                }
-            }
-        ),
-        OnboardingPageInfo(
-            content = { _ ->
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.height(80.dp))
-
-                    Text(
-                        text = "Join our",
-                        style = thinHeaderStyle,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Text(
-                        text = "Community",
-                        fontFamily = GoogleSansFlex,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        lineHeight = 56.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "ViviMusic is open-source and depends on community support to grow. Your help makes a difference!",
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontFamily = GoogleSansFlex
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        PermissionCard(
-                            icon = painterResource(id = R.drawable.star),
-                            iconColor = Color(0xFFfff1a8),
-                            iconTint = Color(0xFF8d6e00),
-                            title = "Star on GitHub",
-                            description = "Help us reach more people by starring our repository.",
-                            shape = topCardShape,
-                            control = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.navigate_next),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            },
-                            onClick = {
-                                uriHandler.safeOpenUri(context, "https://github.com/vivizzz007/vivi-music")
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(2.dp))
-
-                        PermissionCard(
-                            icon = painterResource(com.music.vivi.R.drawable.telegram),
-                            iconColor = Color(0xFF67d4ff),
-                            iconTint = Color(0xFF004e5d),
-                            title = "Join Telegram",
-                            description = "Get the latest updates and chat with the community.",
-                            shape = middleCardShape,
-                            control = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.navigate_next),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            },
-                            onClick = {
-                                uriHandler.safeOpenUri(context, "https://t.me/vivimusicapp")
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(2.dp))
-
-                        PermissionCard(
-                            icon = painterResource(com.music.vivi.R.drawable.currency_rupee_upi),
-                            iconColor = Color(0xFFffb4ab),
-                            iconTint = Color(0xFF690005),
-                            title = "Support via UPI",
-                            description = "Directly support development via UPI.",
-                            shape = middleCardShape,
-                            control = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.navigate_next),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            },
-                            onClick = {
-                                uriHandler.safeOpenUri(context, "upi://pay?pa=vividhpashokan@axl&pn=Vividh P Ashokan")
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(2.dp))
-
-                        PermissionCard(
-                            icon = painterResource(com.music.vivi.R.drawable.buymeacoffee),
-                            iconColor = Color(0xFFffb4ab),
-                            iconTint = Color(0xFF690005),
-                            title = "Buy Me a Coffee",
-                            description = "Support the project through Ko-fi.",
-                            shape = bottomCardShape,
-                            control = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.navigate_next),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            },
-                            onClick = {
-                                uriHandler.safeOpenUri(context, "https://ko-fi.com/vividhpashokan")
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(100.dp))
-                    }
-                }
-            }
-        ),
-        OnboardingPageInfo(
-            content = { onUpdateScroll ->
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.height(80.dp))
-
-                    Column(modifier = Modifier.padding(bottom = 16.dp)) {
-                        Text(
-                            text = stringResource(com.music.vivi.R.string.feat_discover),
-                            style = thinHeaderStyle,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            text = stringResource(com.music.vivi.R.string.feat_features),
-                            fontFamily = GoogleSansFlex,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 48.sp,
-                            color = MaterialTheme.colorScheme.primary,
-                            lineHeight = 56.sp
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = stringResource(com.music.vivi.R.string.feat_intro),
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                fontFamily = GoogleSansFlex
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Box(modifier = Modifier.weight(1f)) {
-                        val scrollState = rememberScrollState()
-
-                        val isAtBottom by remember {
-                            derivedStateOf {
-                                val layoutInfo = scrollState.maxValue
-                                layoutInfo == 0 || scrollState.value >= (layoutInfo - 20)
-                            }
-                        }
-
-                        LaunchedEffect(isAtBottom) {
-                            onUpdateScroll(isAtBottom)
-                        }
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(scrollState)
-                        ) {
-                            FeatureCard(
-                                icon = painterResource(id = R.drawable.lyrics),
-                                iconColor = Color(0xFFffaee4),
-                                iconTint = Color(0xFF8d0053),
-                                title = stringResource(com.music.vivi.R.string.feat_lyrics_title),
-                                description = stringResource(com.music.vivi.R.string.feat_lyrics_desc),
-                                shape = topCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = painterResource(id = R.drawable.download),
-                                iconColor = Color(0xFF80da88),
-                                iconTint = Color(0xFF00522c),
-                                shape = middleCardShape,
-                                title = stringResource(com.music.vivi.R.string.feat_download_title),
-                                description = stringResource(com.music.vivi.R.string.feat_download_desc)
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = painterResource(id = R.drawable.high_quality),
-                                iconColor = Color(0xFFffb683),
-                                iconTint = Color(0xFF753403),
-                                title = stringResource(com.music.vivi.R.string.feat_quality_title),
-                                description = stringResource(com.music.vivi.R.string.feat_quality_desc),
-                                shape = middleCardShape
-                            )
-
-                            if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) {
-                                Spacer(modifier = Modifier.height(2.dp))
-
-                                FeatureCard(
-                                    icon = painterResource(id = R.drawable.update),
-                                    iconColor = Color(0xFF67d4ff),
-                                    iconTint = Color(0xFF004e5d),
-                                    title = stringResource(com.music.vivi.R.string.feat_update_title),
-                                    description = stringResource(com.music.vivi.R.string.feat_update_desc),
-                                    shape = middleCardShape
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = painterResource(id = R.drawable.gavel),
-                                iconColor = Color(0xFFb6c6ed),
-                                iconTint = Color(0xFF001b3f),
-                                title = stringResource(com.music.vivi.R.string.feat_license_title),
-                                description = stringResource(com.music.vivi.R.string.feat_license_desc),
-                                shape = middleCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = painterResource(id = R.drawable.terminal),
-                                iconColor = Color(0xFFcabeff),
-                                iconTint = Color(0xFF1c0062),
-                                title = stringResource(com.music.vivi.R.string.feat_github_title),
-                                description = stringResource(com.music.vivi.R.string.feat_github_desc),
-                                shape = bottomCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(100.dp))
-                        }
-                    }
-                }
-            }
-        )
-    )
-
-    val pagerState = rememberPagerState(pageCount = { pages.size })
-    val isFirstPage = pagerState.currentPage == 0
-    val isTargetFirstPage = pagerState.targetPage == 0
-    val isLastPage = pagerState.currentPage == pages.size - 1
-
-    if (showAppLanguageDialog) {
-        EnumDialog(
-            onDismiss = { showAppLanguageDialog = false },
-            onSelect = { selectedLang ->
-                scope.launch {
-                    context.dataStore.edit { it[AppLanguageKey] = selectedLang }
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                        val locale = if (selectedLang == SYSTEM_DEFAULT) java.util.Locale.getDefault() else java.util.Locale.forLanguageTag(selectedLang)
-                        com.music.vivi.utils.setAppLocale(context, locale)
-                        (context as? Activity)?.recreate()
-                    }
-                }
-                showAppLanguageDialog = false
-            },
-            title = stringResource(com.music.vivi.R.string.app_language),
-            current = appLanguage,
-            values = (listOf(SYSTEM_DEFAULT) + LanguageCodeToName.keys.toList()),
-            valueText = {
-                LanguageCodeToName.getOrElse(it) { stringResource(com.music.vivi.R.string.system_default) }
-            }
-        )
-    }
-
-
-    BackHandler(enabled = !isTargetFirstPage && !showFinishingTransition) {
-        scope.launch {
-            pagerState.animateScrollToPage(
-                pagerState.currentPage - 1,
-                animationSpec = pageTransitionSpatialSpec
-            )
-        }
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.TopCenter
+        modifier = Modifier
+            .fillMaxSize()
+            .background(bgGradient)
+            .windowInsetsPadding(WindowInsets.systemBars)
+            .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        AnimatedVisibility(
-            visible = !showFinishingTransition,
-            enter = fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec()),
-            exit = fadeOut(MaterialTheme.motionScheme.fastEffectsSpec()),
-            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .widthIn(max = 700.dp)
-                    .fillMaxSize()
-                    .padding(24.dp)
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    userScrollEnabled = false,
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Header: "welcome / welcome back"
+            Text(
+                text = if (authMode == AuthMode.SIGN_IN) "welcome back" else "welcome",
+                style = TextStyle(
+                    fontSize = 38.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = FontFamily.Serif,
+                    color = Color(0xFFD6D1E8)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Text(
+                text = "to sonic boom",
+                style = TextStyle(
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = FontFamily.Serif,
+                    color = Color(0xFFA59EC2)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Step Indicator (Only during SIGN_UP)
+            if (authMode == AuthMode.SIGN_UP) {
+                StepIndicatorBar(
+                    currentStep = currentStep,
+                    totalSteps = 4
+                )
+                Spacer(modifier = Modifier.height(28.dp))
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Error display
+            if (errorMessage != null) {
+                Text(
+                    text = errorMessage.orEmpty(),
+                    color = Color(0xFFFF6B6B),
+                    fontSize = 14.sp,
                     modifier = Modifier
-                        .weight(1f)
                         .fillMaxWidth()
-                ) { index ->
-                    pages[index].content { scrolledToEnd ->
-                        if (index == pages.size - 1) {
-                            isLastPageScrolledToEnd = true
-                        }
+                        .padding(bottom = 12.dp)
+                )
+            }
+
+            // Animated Screen Content
+            AnimatedContent(
+                targetState = if (authMode == AuthMode.SIGN_IN) 0 else currentStep,
+                transitionSpec = {
+                    fadeIn(animationSpec = androidx.compose.animation.core.tween(220)) togetherWith
+                            fadeOut(animationSpec = androidx.compose.animation.core.tween(180))
+                },
+                label = "AuthSteps"
+            ) { step ->
+                when (step) {
+                    0 -> {
+                        // SIGN IN SCREEN ("welcome back")
+                        SignInScreenContent(
+                            identifier = signInIdentifier,
+                            onIdentifierChange = { signInIdentifier = it },
+                            password = signInPassword,
+                            onPasswordChange = { signInPassword = it },
+                            onForgotPasswordClick = { showForgotPasswordDialog = true },
+                            onSwitchToSignUp = {
+                                authMode = AuthMode.SIGN_UP
+                                currentStep = 1
+                                errorMessage = null
+                            }
+                        )
+                    }
+                    1 -> {
+                        // STEP 1: Name, Username, Passwords
+                        Step1RegistrationContent(
+                            name = name,
+                            onNameChange = { name = it },
+                            username = username,
+                            onUsernameChange = { username = it },
+                            password = password,
+                            onPasswordChange = { password = it },
+                            confirmPassword = confirmPassword,
+                            onConfirmPasswordChange = { confirmPassword = it },
+                            onSwitchToSignIn = {
+                                authMode = AuthMode.SIGN_IN
+                                errorMessage = null
+                            }
+                        )
+                    }
+                    2 -> {
+                        // STEP 2: Date of Birth Picker
+                        Step2BirthdateContent(
+                            birthdate = birthdate,
+                            onBirthdateChange = { birthdate = it }
+                        )
+                    }
+                    3 -> {
+                        // STEP 3: Email & Feature Checklists
+                        Step3PreferencesContent(
+                            username = username,
+                            email = email,
+                            onEmailChange = { email = it },
+                            aiSync = aiSync,
+                            onAiSyncChange = { aiSync = it },
+                            dolbyMusic = dolbyMusic,
+                            onDolbyMusicChange = { dolbyMusic = it },
+                            customPlaylist = customPlaylist,
+                            onCustomPlaylistChange = { customPlaylist = it },
+                            equalizer = equalizer,
+                            onEqualizerChange = { equalizer = it },
+                            youtubeSync = youtubeSync,
+                            onYoutubeSyncChange = { youtubeSync = it }
+                        )
+                    }
+                    4 -> {
+                        // STEP 4: YouTube Sync
+                        Step4YouTubeSyncContent(
+                            isConnected = isYoutubeConnected,
+                            accountName = youtubeAccountName,
+                            channelHandle = youtubeChannelHandle,
+                            onConnectClick = { showYoutubeLoginDialog = true }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f, fill = false))
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Bottom Navigation Actions ("skip" / "next")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (authMode == AuthMode.SIGN_UP && currentStep == 4) {
+                    TextButton(
+                        onClick = {
+                            // Skip YouTube sync and complete registration
+                            scope.launch {
+                                isLoading = true
+                                errorMessage = null
+                                completeRegistration(
+                                    context = context,
+                                    name = name,
+                                    username = username,
+                                    email = email,
+                                    password = password,
+                                    birthdate = birthdate,
+                                    preferences = mapOf(
+                                        "aiSync" to aiSync,
+                                        "dolby" to dolbyMusic,
+                                        "customPlaylist" to customPlaylist,
+                                        "equalizer" to equalizer,
+                                        "youtubeSync" to false
+                                    ),
+                                    youtubeConnected = false,
+                                    youtubeName = "",
+                                    youtubeHandle = "",
+                                    onSuccess = onFinished,
+                                    onError = {
+                                        isLoading = false
+                                        errorMessage = it
+                                    }
+                                )
+                            }
+                        },
+                        enabled = !isLoading,
+                        modifier = Modifier.padding(end = 12.dp)
+                    ) {
+                        Text(
+                            text = "skip",
+                            color = Color(0xFFD6D1E8),
+                            fontSize = 16.sp
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = {
+                        errorMessage = null
+                        if (authMode == AuthMode.SIGN_IN) {
+                            // Process Sign In
+                            if (signInIdentifier.isBlank() || signInPassword.isBlank()) {
+                                errorMessage = "Please enter your email and password"
+                                return@Button
+                            }
+                            scope.launch {
+                                isLoading = true
+                                val res = FirebaseAuthService.signIn(signInIdentifier.trim(), signInPassword)
+                                res.onSuccess { fbUser ->
+                                    // Save credentials to DataStore
+                                    context.dataStore.edit {
+                                        it[FirebaseUidKey] = fbUser.uid
+                                        it[FirebaseTokenKey] = fbUser.idToken
+                                        it[FirebaseEmailKey] = fbUser.email
+                                        it[FirebaseIsLoggedInKey] = true
+                                    }
+                                    // Fetch user profile from database
+                                    FirebaseAuthService.fetchUserProfile(fbUser.uid, fbUser.idToken).onSuccess { profile ->
+                                        context.dataStore.edit {
+                                            it[FirebaseNameKey] = profile.name
+                                            it[FirebaseUsernameKey] = profile.username
+                                            it[FirebaseBirthdateKey] = profile.birthdate
+                                        }
+                                    }
+                                    isLoading = false
+                                    onFinished()
+                                }.onFailure {
+                                    isLoading = false
+                                    errorMessage = it.message ?: "Login failed"
+                                }
+                            }
+                        } else {
+                            // Process Sign Up Steps
+                            when (currentStep) {
+                                1 -> {
+                                    if (name.isBlank()) {
+                                        errorMessage = "Please enter your name"
+                                    } else if (username.isBlank()) {
+                                        errorMessage = "Please create a username"
+                                    } else if (password.length < 4) {
+                                        errorMessage = "Password must be at least 4 characters"
+                                    } else if (password != confirmPassword) {
+                                        errorMessage = "Passwords do not match"
+                                    } else {
+                                        currentStep = 2
+                                    }
+                                }
+                                2 -> {
+                                    if (birthdate.isBlank()) {
+                                        errorMessage = "Please select your date of birth"
+                                    } else {
+                                        currentStep = 3
+                                    }
+                                }
+                                3 -> {
+                                    if (email.isBlank() || !email.contains("@")) {
+                                        errorMessage = "Please enter a valid email address"
+                                    } else {
+                                        currentStep = 4
+                                    }
+                                }
+                                4 -> {
+                                    // Complete registration with YouTube Sync (if connected)
+                                    scope.launch {
+                                        isLoading = true
+                                        completeRegistration(
+                                            context = context,
+                                            name = name,
+                                            username = username,
+                                            email = email,
+                                            password = password,
+                                            birthdate = birthdate,
+                                            preferences = mapOf(
+                                                "aiSync" to aiSync,
+                                                "dolby" to dolbyMusic,
+                                                "customPlaylist" to customPlaylist,
+                                                "equalizer" to equalizer,
+                                                "youtubeSync" to isYoutubeConnected
+                                            ),
+                                            youtubeConnected = isYoutubeConnected,
+                                            youtubeName = youtubeAccountName,
+                                            youtubeHandle = youtubeChannelHandle,
+                                            onSuccess = onFinished,
+                                            onError = {
+                                                isLoading = false
+                                                errorMessage = it
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEBEBF5),
+                        contentColor = Color(0xFF141724)
+                    ),
+                    shape = RoundedCornerShape(50),
+                    contentPadding = PaddingValues(horizontal = 32.dp, vertical = 14.dp),
+                    enabled = !isLoading
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            color = Color(0xFF141724),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "next",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
 
-                val languageButtonWidth by animateDpAsState(
-                    targetValue = if (isTargetFirstPage) 64.dp else 0.dp,
-                    animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
-                    label = "languageButtonWidth"
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+
+    // YouTube Sign-in WebView Dialog
+    if (showYoutubeLoginDialog) {
+        YouTubeLoginDialog(
+            onDismiss = { showYoutubeLoginDialog = false },
+            onLoginSuccess = { ytName, ytHandle ->
+                isYoutubeConnected = true
+                youtubeAccountName = ytName
+                youtubeChannelHandle = ytHandle
+                showYoutubeLoginDialog = false
+                Toast.makeText(context, "YouTube Synced: $ytName", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    // Forgot Password Dialog
+    if (showForgotPasswordDialog) {
+        ForgotPasswordDialog(
+            onDismiss = { showForgotPasswordDialog = false },
+            onSend = { resetEmail ->
+                scope.launch {
+                    val res = FirebaseAuthService.sendPasswordReset(resetEmail)
+                    res.onSuccess {
+                        Toast.makeText(context, "Password reset email sent!", Toast.LENGTH_LONG).show()
+                        showForgotPasswordDialog = false
+                    }.onFailure {
+                        Toast.makeText(context, it.message ?: "Failed to send reset email", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        )
+    }
+}
+
+/**
+ * Handles Firebase Auth Sign-Up and saving to Firebase Realtime Database
+ */
+private suspend fun completeRegistration(
+    context: Context,
+    name: String,
+    username: String,
+    email: String,
+    password: String,
+    birthdate: String,
+    preferences: Map<String, Boolean>,
+    youtubeConnected: Boolean,
+    youtubeName: String,
+    youtubeHandle: String,
+    onSuccess: () -> Unit,
+    onError: (String) -> Unit
+) {
+    // 1. Sign up with Firebase Auth
+    var fbUser = FirebaseAuthService.signUp(email.trim(), password).getOrNull()
+
+    // If email already exists, attempt to sign in
+    if (fbUser == null) {
+        val signInRes = FirebaseAuthService.signIn(email.trim(), password)
+        fbUser = signInRes.getOrNull()
+        if (fbUser == null) {
+            onError(signInRes.exceptionOrNull()?.message ?: "Sign-up failed. Please check your credentials.")
+            return
+        }
+    }
+
+    // 2. Save user profile to Firebase Realtime Database at /users/$uid
+    val dbResult = FirebaseAuthService.saveUserProfile(
+        uid = fbUser.uid,
+        idToken = fbUser.idToken,
+        name = name,
+        username = username,
+        email = email,
+        password = password,
+        birthdate = birthdate,
+        preferences = preferences,
+        youtubeConnected = youtubeConnected,
+        youtubeAccountName = youtubeName,
+        youtubeChannelHandle = youtubeHandle
+    )
+
+    if (dbResult.isFailure) {
+        Timber.e(dbResult.exceptionOrNull(), "Failed to save profile to Realtime Database")
+        // We still save locally to allow user into the app
+    }
+
+    // 3. Save session to local DataStore
+    context.dataStore.edit {
+        it[FirebaseUidKey] = fbUser.uid
+        it[FirebaseTokenKey] = fbUser.idToken
+        it[FirebaseNameKey] = name.trim()
+        it[FirebaseUsernameKey] = username.trim()
+        it[FirebaseEmailKey] = email.trim()
+        it[FirebaseBirthdateKey] = birthdate
+        it[FirebaseIsLoggedInKey] = true
+
+        it[FirebaseAiSyncKey] = preferences["aiSync"] ?: true
+        it[FirebaseDolbyKey] = preferences["dolby"] ?: true
+        it[FirebaseCustomPlaylistKey] = preferences["customPlaylist"] ?: true
+        it[FirebaseEqualizerKey] = preferences["equalizer"] ?: true
+        it[FirebaseYoutubeSyncKey] = youtubeConnected
+    }
+
+    onSuccess()
+}
+
+// ============================================================================
+// STEP INDICATOR BAR (1, 2, 3, 4 with cyan progress line)
+// ============================================================================
+@Composable
+private fun StepIndicatorBar(
+    currentStep: Int,
+    totalSteps: Int
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(30.dp))
+            .background(Color(0x334E577C))
+            .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(30.dp))
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                for (step in 1..totalSteps) {
+                    val isActive = step <= currentStep
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (isActive) Color(0xFF67B7A4) else Color(0xFF535D7A)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "$step",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = FontFamily.Serif,
+                            color = if (isActive) Color(0xFF142420) else Color(0xFFC0C7DE)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Progress Bar Underline
+            val progress = currentStep.toFloat() / totalSteps.toFloat()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(3.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color(0x22FFFFFF))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(progress)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(Color(0xFF4EE2C1), Color(0xFF3BA2E8))
+                            )
+                        )
                 )
-                val languageButtonAlpha by animateFloatAsState(
-                    targetValue = if (isTargetFirstPage) 1f else 0f,
-                    animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
-                    label = "languageButtonAlpha"
+            }
+        }
+    }
+}
+
+// ============================================================================
+// STEP 1: Registration Form (Image 3)
+// ============================================================================
+@Composable
+private fun Step1RegistrationContent(
+    name: String,
+    onNameChange: (String) -> Unit,
+    username: String,
+    onUsernameChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    confirmPassword: String,
+    onConfirmPasswordChange: (String) -> Unit,
+    onSwitchToSignIn: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        PillInputField(
+            label = "what is your beautiful Name",
+            value = name,
+            onValueChange = onNameChange,
+            placeholder = "Enter your full name"
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        PillInputField(
+            label = "create a outstanding username",
+            value = username,
+            onValueChange = onUsernameChange,
+            placeholder = "Choose a unique username"
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        PillInputField(
+            label = "create tough password",
+            value = password,
+            onValueChange = onPasswordChange,
+            isPassword = true,
+            placeholder = "At least 4 characters"
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        PillInputField(
+            label = "re write password",
+            value = confirmPassword,
+            onValueChange = onConfirmPasswordChange,
+            isPassword = true,
+            placeholder = "Re-enter password"
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Already have an account? ",
+                color = Color(0xFFA59EC2),
+                fontSize = 14.sp
+            )
+            Text(
+                text = "Sign In",
+                color = Color(0xFF4EE2C1),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.clickable { onSwitchToSignIn() }
+            )
+        }
+    }
+}
+
+// ============================================================================
+// STEP 2: Date of Birth Picker (Image 5)
+// ============================================================================
+@Composable
+private fun Step2BirthdateContent(
+    birthdate: String,
+    onBirthdateChange: (String) -> Unit
+) {
+    val context = LocalContext.current
+    val calendar = remember { Calendar.getInstance() }
+
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val formatted = String.format("%02d/%02d/%04d", month + 1, dayOfMonth, year)
+                onBirthdateChange(formatted)
+            },
+            calendar.get(Calendar.YEAR) - 18,
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(24.dp)),
+            colors = CardDefaults.cardColors(containerColor = Color(0x334E577C)),
+            border = CardDefaults.outlinedCardBorder().copy(brush = SolidColor(Color(0x33FFFFFF)))
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    text = "Select date",
+                    fontSize = 14.sp,
+                    color = Color(0xFFA59EC2),
+                    fontFamily = FontFamily.Serif
                 )
-                val spacingValue by animateDpAsState(
-                    targetValue = if (isTargetFirstPage) 12.dp else 0.dp,
-                    animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
-                    label = "buttonSpacing"
-                )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 24.dp)
-                        .height(80.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val languageButtonShapes = IconButtonDefaults.shapes(
-                        shape = CircleShape,
-                        pressedShape = RoundedCornerShape(12.dp)
+                    Text(
+                        text = "Enter date",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.White
                     )
-                    FilledTonalIconButton(
-                        onClick = {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                runCatching {
-                                    context.startActivity(
-                                        Intent(
-                                            Settings.ACTION_APP_LOCALE_SETTINGS,
-                                            "package:${context.packageName}".toUri()
-                                        )
-                                    )
-                                }
-                            } else {
-                                showAppLanguageDialog = true
-                            }
-                        },
-                        modifier = Modifier
-                            .size(languageButtonWidth)
-                            .alpha(languageButtonAlpha),
-                        shapes = languageButtonShapes,
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) {
+
+                    IconButton(onClick = { datePickerDialog.show() }) {
                         Icon(
-                            painter = painterResource(id = com.music.vivi.R.drawable.language),
-                            contentDescription = "Language",
+                            painter = painterResource(R.drawable.ic_calendar_month),
+                            contentDescription = "Select Date",
+                            tint = Color(0xFFA59EC2),
                             modifier = Modifier.size(28.dp)
                         )
                     }
-
-                    Spacer(modifier = Modifier.width(spacingValue))
-
-                    val isNextEnabled = !isLastPage || isLastPageScrolledToEnd
-                    val alphaNext by animateFloatAsState(
-                        targetValue = if (isNextEnabled) 1f else 0.5f,
-                        label = "nextAlpha"
-                    )
-
-                    WelcomeExpressiveButton(
-                        text = if (isLastPage) stringResource(com.music.vivi.R.string.get_started) else stringResource(com.music.vivi.R.string.next),
-                        onClick = {
-                            if (isLastPage) {
-                                if (isLastPageScrolledToEnd) showFinishingTransition = true
-                            } else {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(
-                                        pagerState.currentPage + 1,
-                                        animationSpec = pageTransitionSpatialSpec
-                                    )
-                                }
-                            }
-                        },
-                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = alphaNext),
-                        contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = alphaNext),
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                        showArrowOnly = isTargetFirstPage
-                    )
-                }
-            }
-        }
-
-        // Finishing transition screen (blob cluster loading)
-        AnimatedVisibility(
-            visible = showFinishingTransition,
-            enter = fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec()) + scaleIn(initialScale = 0.92f),
-            exit = fadeOut(MaterialTheme.motionScheme.fastEffectsSpec())
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Spacer(modifier = Modifier.height(80.dp))
-
-                Column(modifier = Modifier.padding(bottom = 16.dp)) {
-                    Text(
-                        text = "Setting up",
-                        style = thinHeaderStyle,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Text(
-                        text = "ViviMusic…",
-                        fontFamily = GoogleSansFlex,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        lineHeight = 56.sp
-                    )
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(18.dp))
 
-                BlobClusterLoading(
+                // Date display pill
+                Box(
                     modifier = Modifier
-                        .size(180.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0x22FFFFFF))
+                        .border(1.dp, Color(0xFF67B7A4), RoundedCornerShape(12.dp))
+                        .clickable { datePickerDialog.show() }
+                        .padding(horizontal = 16.dp, vertical = 14.dp)
+                ) {
+                    Text(
+                        text = if (birthdate.isNotBlank()) birthdate else "mm/dd/yyyy",
+                        fontSize = 16.sp,
+                        color = if (birthdate.isNotBlank()) Color.White else Color(0x88FFFFFF)
+                    )
+                }
 
-                Spacer(modifier = Modifier.weight(1.2f))
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { onBirthdateChange("") }) {
+                        Text("Cancel", color = Color(0xFFA59EC2))
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = { datePickerDialog.show() }) {
+                        Text("OK", color = Color(0xFF4EE2C1), fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
+    }
+}
 
-        // Top-left back arrow overlay using TopAppBar for alignment with settings screens
-        AnimatedVisibility(
-            visible = !isTargetFirstPage && !showFinishingTransition,
-            enter = fadeIn(MaterialTheme.motionScheme.fastEffectsSpec()),
-            exit = fadeOut(MaterialTheme.motionScheme.fastEffectsSpec())
+// ============================================================================
+// STEP 3: Email & Feature Checklists (Image 2)
+// ============================================================================
+@Composable
+private fun Step3PreferencesContent(
+    username: String,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    aiSync: Boolean,
+    onAiSyncChange: (Boolean) -> Unit,
+    dolbyMusic: Boolean,
+    onDolbyMusicChange: (Boolean) -> Unit,
+    customPlaylist: Boolean,
+    onCustomPlaylistChange: (Boolean) -> Unit,
+    equalizer: Boolean,
+    onEqualizerChange: (Boolean) -> Unit,
+    youtubeSync: Boolean,
+    onYoutubeSyncChange: (Boolean) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        PillInputField(
+            label = "give me your email ${if (username.isNotBlank()) "{$username}" else ""}",
+            value = email,
+            onValueChange = onEmailChange,
+            placeholder = "name@example.com",
+            keyboardType = KeyboardType.Email
+        )
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        // Checklists container card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(24.dp)),
+            colors = CardDefaults.cardColors(containerColor = Color(0x334E577C)),
+            border = CardDefaults.outlinedCardBorder().copy(brush = SolidColor(Color(0x33FFFFFF)))
         ) {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(
-                                pagerState.currentPage - 1,
-                                animationSpec = pageTransitionSpatialSpec
-                            )
-                        }
-                    }) {
-                        Icon(
-                            painter = painterResource(com.music.vivi.R.drawable.arrow_back),
-                            contentDescription = stringResource(com.music.vivi.R.string.back_button_desc)
+            Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp)) {
+                PreferenceCheckboxRow("ai sync", aiSync, onAiSyncChange)
+                Spacer(modifier = Modifier.height(18.dp))
+                PreferenceCheckboxRow("music with dolby", dolbyMusic, onDolbyMusicChange)
+                Spacer(modifier = Modifier.height(18.dp))
+                PreferenceCheckboxRow("custom playlist", customPlaylist, onCustomPlaylistChange)
+                Spacer(modifier = Modifier.height(18.dp))
+                PreferenceCheckboxRow("equalizer", equalizer, onEqualizerChange)
+                Spacer(modifier = Modifier.height(18.dp))
+                PreferenceCheckboxRow("YouTube sync", youtubeSync, onYoutubeSyncChange)
+            }
+        }
+    }
+}
+
+@Composable
+private fun PreferenceCheckboxRow(
+    title: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) },
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Normal,
+            color = Color(0xFFE3E0F2)
+        )
+
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(if (checked) Color(0xFF6B58A6) else Color(0x33FFFFFF))
+                .border(1.dp, if (checked) Color(0xFF8D78D6) else Color(0x44FFFFFF), RoundedCornerShape(6.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            if (checked) {
+                Icon(
+                    painter = painterResource(R.drawable.check),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
+    }
+}
+
+// ============================================================================
+// STEP 4: YouTube Sync (Image 1)
+// ============================================================================
+@Composable
+private fun Step4YouTubeSyncContent(
+    isConnected: Boolean,
+    accountName: String,
+    channelHandle: String,
+    onConnectClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "YOU TUBE SYNC",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp,
+            color = Color.White
+        )
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        // Google Sign in Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(24.dp))
+                .clickable { onConnectClick() },
+            colors = CardDefaults.cardColors(containerColor = Color(0x334E577C)),
+            border = CardDefaults.outlinedCardBorder().copy(brush = SolidColor(Color(0x33FFFFFF)))
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 22.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Google Circle Avatar ("G")
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFD6D1E8)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "G",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1E284A)
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
+
+                    Column {
+                        Text(
+                            text = if (isConnected) "google sign in: connected" else "google sign in",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = if (isConnected) {
+                                if (channelHandle.isNotBlank()) "@$channelHandle" else accountName
+                            } else {
+                                "go ahead"
+                            },
+                            fontSize = 14.sp,
+                            color = if (isConnected) Color(0xFF4EE2C1) else Color(0xFFA59EC2)
+                        )
+                    }
+                }
+
+                // Red YouTube Play Icon Badge
+                Box(
+                    modifier = Modifier
+                        .size(width = 54.dp, height = 36.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(if (isConnected) Color(0xFF2E7D32) else Color(0xFFFF0000)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(if (isConnected) R.drawable.check else R.drawable.play),
+                        contentDescription = "YouTube",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// SIGN IN CONTENT ("welcome back to sonic boom", Image 4)
+// ============================================================================
+@Composable
+private fun SignInScreenContent(
+    identifier: String,
+    onIdentifierChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    onSwitchToSignUp: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        PillInputField(
+            label = "Enter you username or email",
+            value = identifier,
+            onValueChange = onIdentifierChange,
+            placeholder = "username or name@example.com"
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        PillInputField(
+            label = "Enter your password",
+            value = password,
+            onValueChange = onPasswordChange,
+            isPassword = true,
+            placeholder = "Enter password"
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = "forgot password",
+            fontSize = 14.sp,
+            color = Color(0xFF67B7A4),
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier
+                .clickable { onForgotPasswordClick() }
+                .padding(vertical = 4.dp)
+        )
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Don't have an account? ",
+                color = Color(0xFFA59EC2),
+                fontSize = 14.sp
+            )
+            Text(
+                text = "Sign Up",
+                color = Color(0xFF4EE2C1),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.clickable { onSwitchToSignUp() }
             )
         }
     }
 }
 
+// ============================================================================
+// REUSABLE PILL INPUT FIELD
+// ============================================================================
 @Composable
-fun BlobClusterLoading(modifier: Modifier = Modifier) {
-    val infiniteTransition = rememberInfiniteTransition(label = "blobClusterRotation")
-    
-    val rotation1 by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(25000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation1"
-    )
-    val rotation2 by infiniteTransition.animateFloat(
-        initialValue = 360f,
-        targetValue = 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(30000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation2"
-    )
-    val rotation3 by infiniteTransition.animateFloat(
-        initialValue = 180f,
-        targetValue = 540f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(20000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation3"
-    )
+private fun PillInputField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String = "",
+    isPassword: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            fontSize = 15.sp,
+            fontFamily = FontFamily.Serif,
+            color = Color(0xFFDCD8EE),
+            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+        )
 
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        // Blob 1 (large, primary)
-        Icon(
-            painter = painterResource(id = com.music.vivi.R.drawable.ic_ten_sided_cookie),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primaryContainer,
+        Box(
             modifier = Modifier
-                .size(140.dp)
-                .rotate(rotation1)
-        )
-        // Blob 2 (medium, secondary, offset)
-        Icon(
-            painter = painterResource(id = com.music.vivi.R.drawable.ic_ten_sided_cookie),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.secondaryContainer,
-            modifier = Modifier
-                .size(100.dp)
-                .rotate(rotation2)
-                .align(Alignment.TopStart)
-                .padding(top = 16.dp, start = 16.dp)
-        )
-        // Blob 3 (small, tertiary, offset)
-        Icon(
-            painter = painterResource(id = com.music.vivi.R.drawable.ic_ten_sided_cookie),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.tertiaryContainer,
-            modifier = Modifier
-                .size(80.dp)
-                .rotate(rotation3)
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 8.dp, end = 8.dp)
-        )
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color(0x2E53658C))
+                .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(24.dp))
+                .padding(horizontal = 18.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            if (value.isEmpty()) {
+                Text(
+                    text = placeholder,
+                    color = Color(0x66FFFFFF),
+                    fontSize = 15.sp
+                )
+            }
+
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                textStyle = TextStyle(
+                    color = Color.White,
+                    fontSize = 15.sp
+                ),
+                cursorBrush = SolidColor(Color.White),
+                visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = if (isPassword) KeyboardType.Password else keyboardType,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
+// ============================================================================
+// YOUTUBE SIGN-IN DIALOG (WebView)
+// ============================================================================
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun RotatingShapeContainer(modifier: Modifier = Modifier, rotate: Boolean = true) {
-    val rotation = if (rotate) {
-        val infiniteTransition = rememberInfiniteTransition(label = "shapeRotation")
-        infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 360f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(20000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "rotation"
-        ).value
-    } else {
-        0f
-    }
+private fun YouTubeLoginDialog(
+    onDismiss: () -> Unit,
+    onLoginSuccess: (name: String, handle: String) -> Unit
+) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val backgroundColor = MaterialTheme.colorScheme.background
+    var webView by remember { mutableStateOf<WebView?>(null) }
+    var isValidating by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Icon(
-            painter = painterResource(id = com.music.vivi.R.drawable.ic_ten_sided_cookie),
-            contentDescription = null,
-            tint = primaryColor,
+        Card(
             modifier = Modifier
                 .fillMaxSize()
-                .rotate(rotation)
-        )
+                .padding(16.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF141724))
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Header
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Sign in to YouTube",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
 
-        Icon(
-            painter = painterResource(com.music.vivi.R.mipmap.ic_launcher_monochrome),
-            contentDescription = null,
-            modifier = Modifier.size(220.dp),
-            tint = backgroundColor
-        )
-    }
-}
+                    IconButton(onClick = onDismiss) {
+                        Icon(painter = painterResource(R.drawable.close), contentDescription = "Close", tint = Color.White)
+                    }
+                }
 
-@Composable
-fun PermissionCard(
-    icon: Painter,
-    iconColor: Color,
-    iconTint: Color,
-    title: String,
-    description: String,
-    shape: Shape,
-    control: @Composable () -> Unit,
-    onClick: () -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val pressProgress by animateFloatAsState(
-        targetValue = if (isPressed) 1f else 0f,
-        animationSpec = tween(durationMillis = 200),
-        label = "anim_shape"
-    )
+                if (isValidating) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0xFF141724)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator(color = Color(0xFF4EE2C1))
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("Connecting YouTube account...", color = Color.White)
+                        }
+                    }
+                } else {
+                    AndroidView(
+                        modifier = Modifier.fillMaxSize(),
+                        factory = { ctx ->
+                            WebView(ctx).apply {
+                                webViewClient = object : WebViewClient() {
+                                    override fun onPageFinished(view: WebView, url: String?) {
+                                        loadUrl("javascript:Android.onRetrieveVisitorData(window.yt.config_.VISITOR_DATA)")
+                                        loadUrl("javascript:Android.onRetrieveDataSyncId(window.yt.config_.DATASYNC_ID)")
 
-    val animatedShape = remember(shape, pressProgress) {
-        if (shape is RoundedCornerShape) {
-            object : Shape {
-                override fun createOutline(
-                    size: Size,
-                    layoutDirection: LayoutDirection,
-                    density: Density
-                ): Outline {
-                    val targetPx = with(density) { 20.dp.toPx() }
-                    fun lerp(start: Float, stop: Float, fraction: Float) =
-                        (1 - fraction) * start + fraction * stop
+                                        if (url?.startsWith("https://music.youtube.com") == true ||
+                                            url?.contains("youtube.com") == true
+                                        ) {
+                                            val cookies = CookieManager.getInstance().getCookie(url)
+                                            if (!cookies.isNullOrBlank() && (cookies.contains("SAPISID") || cookies.contains("__Secure-3PSID"))) {
+                                                isValidating = true
+                                                coroutineScope.launch {
+                                                    context.dataStore.edit { it[InnerTubeCookieKey] = cookies }
+                                                    YouTube.cookie = cookies
 
-                    val ts = lerp(shape.topStart.toPx(size, density), targetPx, pressProgress)
-                    val te = lerp(shape.topEnd.toPx(size, density), targetPx, pressProgress)
-                    val bs = lerp(shape.bottomStart.toPx(size, density), targetPx, pressProgress)
-                    val be = lerp(shape.bottomEnd.toPx(size, density), targetPx, pressProgress)
+                                                    val result = withTimeoutOrNull(15_000.milliseconds) {
+                                                        var attempt = YouTube.accountInfo()
+                                                        if (attempt.isFailure) {
+                                                            delay(750)
+                                                            attempt = YouTube.accountInfo()
+                                                        }
+                                                        attempt
+                                                    }
 
-                    return Outline.Rounded(
-                        androidx.compose.ui.geometry.RoundRect(
-                            rect = androidx.compose.ui.geometry.Rect(
-                                0f,
-                                0f,
-                                size.width,
-                                size.height
-                            ),
-                            topLeft = androidx.compose.ui.geometry.CornerRadius(ts),
-                            topRight = androidx.compose.ui.geometry.CornerRadius(te),
-                            bottomRight = androidx.compose.ui.geometry.CornerRadius(be),
-                            bottomLeft = androidx.compose.ui.geometry.CornerRadius(bs)
-                        )
+                                                    result?.onSuccess { info ->
+                                                        context.dataStore.edit {
+                                                            it[AccountNameKey] = info.name
+                                                            it[AccountEmailKey] = info.email.orEmpty()
+                                                            it[AccountChannelHandleKey] = info.channelHandle.orEmpty()
+                                                        }
+                                                        onLoginSuccess(info.name, info.channelHandle.orEmpty())
+                                                    }?.onFailure {
+                                                        isValidating = false
+                                                        Toast.makeText(context, "Could not fetch YouTube info", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                settings.apply {
+                                    javaScriptEnabled = true
+                                    setSupportZoom(true)
+                                    builtInZoomControls = true
+                                    displayZoomControls = false
+                                }
+                                addJavascriptInterface(object {
+                                    @JavascriptInterface
+                                    fun onRetrieveVisitorData(newVisitorData: String?) {
+                                        if (newVisitorData != null) {
+                                            coroutineScope.launch {
+                                                context.dataStore.edit { it[VisitorDataKey] = newVisitorData }
+                                            }
+                                        }
+                                    }
+                                    @JavascriptInterface
+                                    fun onRetrieveDataSyncId(newDataSyncId: String?) {
+                                        if (newDataSyncId != null) {
+                                            val normalized = normalizeDataSyncId(newDataSyncId)
+                                            if (normalized != null) {
+                                                coroutineScope.launch {
+                                                    context.dataStore.edit { it[DataSyncIdKey] = normalized }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }, "Android")
+
+                                loadUrl("https://accounts.google.com/ServiceLogin?service=youtube&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue")
+                                webView = this
+                            }
+                        }
                     )
                 }
-            }
-        } else shape
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(animatedShape)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null, 
-                onClick = onClick
-            ),
-        shape = animatedShape,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = title,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = GoogleSansFlex
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = description,
-                    fontFamily = GoogleSansFlex,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            leadingContent = {
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = iconColor,
-                    modifier = Modifier.size(48.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            painter = icon,
-                            contentDescription = null,
-                            tint = iconTint,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-            },
-            trailingContent = control,
-            colors = androidx.compose.material3.ListItemDefaults.colors(containerColor = Color.Transparent)
-        )
-    }
-}
-
-@Composable
-fun FeatureCard(
-    icon: Painter,
-    iconColor: Color,
-    iconTint: Color,
-    title: String,
-    description: String,
-    shape: Shape
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape),
-        shape = shape,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = title,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = GoogleSansFlex
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = description,
-                    fontFamily = GoogleSansFlex,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            leadingContent = {
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = iconColor,
-                    modifier = Modifier.size(48.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            painter = icon,
-                            contentDescription = null,
-                            tint = iconTint,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-            },
-            colors = androidx.compose.material3.ListItemDefaults.colors(containerColor = Color.Transparent)
-        )
-    }
-}
-
-@Composable
-fun WelcomeExpressiveButton(
-    text: String,
-    onClick: () -> Unit,
-    containerColor: Color,
-    contentColor: Color,
-    modifier: Modifier = Modifier,
-    isOutlined: Boolean = false,
-    showArrowOnly: Boolean = false
-) {
-    val shapes = ButtonDefaults.shapes(
-        shape = CircleShape,
-        pressedShape = RoundedCornerShape(20.dp)
-    )
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        ),
-        shapes = shapes
-    ) {
-        AnimatedContent(
-            targetState = showArrowOnly,
-            transitionSpec = {
-                (fadeIn(animationSpec = tween(220, delayMillis = 90)) + 
-                 scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90)))
-                .togetherWith(fadeOut(animationSpec = tween(90)))
-            },
-            label = "buttonContentTransition"
-        ) { arrowOnly ->
-            if (arrowOnly) {
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow_forward),
-                    contentDescription = text,
-                    modifier = Modifier.size(32.dp)
-                )
-            } else {
-                Text(
-                    text = text,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = GoogleSansFlex,
-                    fontSize = 18.sp
-                )
             }
         }
     }
 }
 
+// ============================================================================
+// FORGOT PASSWORD DIALOG
+// ============================================================================
+@Composable
+private fun ForgotPasswordDialog(
+    onDismiss: () -> Unit,
+    onSend: (email: String) -> Unit
+) {
+    var emailInput by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Reset Password", color = Color.White) },
+        text = {
+            Column {
+                Text(
+                    "Enter your registered email address and we'll send you a password reset link.",
+                    color = Color(0xFFA59EC2),
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                PillInputField(
+                    label = "Email Address",
+                    value = emailInput,
+                    onValueChange = { emailInput = it },
+                    placeholder = "name@example.com",
+                    keyboardType = KeyboardType.Email
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { if (emailInput.isNotBlank()) onSend(emailInput) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF67B7A4))
+            ) {
+                Text("Send Reset Link", color = Color(0xFF142420))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color(0xFFA59EC2))
+            }
+        },
+        containerColor = Color(0xFF1E284A),
+        shape = RoundedCornerShape(24.dp)
+    )
+}

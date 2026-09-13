@@ -38,7 +38,7 @@ fun DialogBasic(
 ) {
     if (!show) return
 
-    val (liquidGlassUi) = rememberPreference(LiquidGlassUiKey, defaultValue = false)
+    val (liquidGlassUi) = rememberPreference(LiquidGlassUiKey, defaultValue = true)
     val dialogShape = RoundedCornerShape(28.dp)
 
     Dialog(

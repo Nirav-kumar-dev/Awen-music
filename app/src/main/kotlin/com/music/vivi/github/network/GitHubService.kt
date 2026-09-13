@@ -106,7 +106,7 @@ class GitHubService @Inject constructor() {
 
     suspend fun getRepoDetails(): GitHubRepoDto? {
         return try {
-            val response = client.get("https://api.github.com/repos/aaravgaming007-dev/TideFlow") {
+            val response = client.get("https://api.github.com/repos/Nirav-kumar-dev/TideFlow") {
                 header("Accept", "application/vnd.github+json")
                 header("X-GitHub-Api-Version", "2022-11-28")
             }
