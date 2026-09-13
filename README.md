@@ -18,13 +18,32 @@ A feature-rich, open-source music streaming client for Android, powered by YouTu
 - **Offline Caching:** Download your favorite tracks, albums, and playlists for offline playback.
 - **Synchronized Lyrics:** Real-time lyric fetching and display for supported songs.
 - **Audio Controls:** Built-in equalizer presets, gapless playback, and playback speed adjustments.
+- **Listen Together:** Real-time social listening rooms to enjoy music with your friends.
 - **Modern Interface:** Clean aesthetic with improved layout responsiveness and dark mode contrast.
 
 ---
 
-## 📱 Screenshots
+## 📱 App Showcase
 
-*(Add screenshots of your app here to make your README look awesome!)*
+<div align="center">
+
+| **Home Screen** | **Now Playing** |
+| :---: | :---: |
+| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066550.jpg" width="250"/> | <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066549.jpg" width="250"/> |
+
+| **Synchronized Lyrics** | **Library View** |
+| :---: | :---: |
+| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066552.jpg" width="250"/> | <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066554.jpg" width="250"/> |
+
+| **Artist Profile** | **Listen Together** |
+| :---: | :---: |
+| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066553.jpg" width="250"/> | <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066555.jpg" width="250"/> |
+
+| **About View** |
+| :---: |
+| <img src="https://github.com/aaravgaming007-dev/TideFlow/blob/main/screenshots/1000066551.jpg" width="250"/> |
+
+</div>
 
 ---
 
