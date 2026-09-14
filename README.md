@@ -1,15 +1,15 @@
-# TideFlow 🎵
+# TidelFlow 🎵
 
 <div align="center">
 
-[![Live Website](https://img.shields.io/badge/Website-TideFlow%20Live-6366F1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://Nirav-kumar-dev.github.io/TideFlow/)
+[![Live Website](https://img.shields.io/badge/Website-TidelFlow%20Live-6366F1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://Nirav-kumar-dev.github.io/TideFlow/)
 [![GitHub release](https://img.shields.io/github/v/release/Nirav-kumar-dev/TideFlow?include_prereleases&style=for-the-badge&color=22C55E)](https://github.com/Nirav-kumar-dev/TideFlow/releases)
 [![GitHub downloads](https://img.shields.io/github/downloads/Nirav-kumar-dev/TideFlow/total?style=for-the-badge&color=3B82F6)](https://github.com/Nirav-kumar-dev/TideFlow/releases)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-yellow.svg?style=for-the-badge)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**An ultra-premium, AI-powered music streaming client for Android with obsidian dark mode, liquid glass aesthetics, and NVIDIA Nemotron 3.5 intelligence.**
+**An ultra-premium, AI-powered music streaming client for Android with obsidian dark mode, liquid glass aesthetics, NVIDIA Nemotron 3.5 intelligence, and automatic in-app updates.**
 
-[🌐 Visit Official Website](https://Nirav-kumar-dev.github.io/TideFlow/) • [📥 Download Latest APK](https://github.com/Nirav-kumar-dev/TideFlow/releases/latest) • [✨ Feature Request](https://github.com/Nirav-kumar-dev/TideFlow/issues)
+[🌐 Visit Official Website](https://Nirav-kumar-dev.github.io/TideFlow/) • [📥 Download Latest APK (v1.0.3)](https://github.com/Nirav-kumar-dev/TideFlow/releases/latest) • [✨ Feature Request](https://github.com/Nirav-kumar-dev/TideFlow/issues)
 
 </div>
 
@@ -18,16 +18,27 @@
 ## ✨ Cutting-Edge Features
 
 ### 🤖 NVIDIA Nemotron 3.5 Lightning 30B AI Assistant
-- **Hyper-Personalized Curation:** Powered by NVIDIA's `nemotron-3.5-lightning-30b-a3b` with full awareness of your profile, listening history, and audio preferences.
-- **Mood-Based Soundtracks:** Type any vibe, emotion, activity, or question (e.g. *"late night cyberpunk drive"* or *"deep focus coding"*).
-- **1-Tap Play & Save:** Instantly stream the curated queue or save the AI-generated soundtrack straight to your personal library.
+- **Hyper-Personalized Curation:** Powered by NVIDIA's `nemotron-3.5-lightning-30b-a3b` with full awareness of your taste, history, and audio preferences.
+- **Full AI Playlist Queueing:** Tapping **Play** or selecting any track seamlessly queues the entire AI playlist into playback.
+- **Continuous Radio Playback:** When the curated playlist ends, TidelFlow automatically generates a continuous YouTube Radio stream based on the vibe.
+- **Guaranteed Novelty & Diversity:** Intelligent non-repetition memory with dedicated persistent JSON storage prevents repetitive tracks across sessions.
+- **Mood & Vibe Generation:** Type any vibe, emotion, activity, or prompt (e.g. *"late night cyberpunk drive"* or *"high tempo coding flow"*).
+
+### 🔄 Built-In In-App Updater Engine
+- **Seamless GitHub Releases Sync:** Automatically checks for new updates against the repository and alerts you via system notifications.
+- **1-Tap Background Download & Install:** Complete in-app updater with cross-host 302 redirect support and active disk discovery.
+- **Permission Managed:** Integrated `REQUEST_INSTALL_PACKAGES` and unified `FileProvider` architecture for smooth installation on Android 8.0 through Android 16.
+
+### ⚡ Non-Blocking YouTube Music Sync
+- **Instant Background Sync:** Seamlessly synchronizes your YouTube Music playlists, favorites, and library in the background without UI stalls or thread lockups.
+- **Force Sync:** Quick one-tap manual sync in Account Settings.
 
 ### 📸 Camera Vision AI Playlist
 - **Scene-to-Soundtrack:** Snap any view, sunset, workspace, party, or workout scene with your camera.
 - **Visual Intelligence:** AI analyzes the ambiance, lighting, and mood to instantly generate a matching soundtrack.
 
 ### 🪟 Liquid Glass & Obsidian Dark UI
-- **Default Liquid Glass:** Apple-inspired specular frosted glass surfaces across mini-players, navigation bars, and dialogs.
+- **Default Liquid Glass:** Specular frosted glass surfaces across mini-players, navigation bars, and bottom sheets.
 - **AMOLED Pitch Black (`#07070A`):** Battery-saving true black design paired with subtle spotlight glows and refined card borders.
 
 ### 🎛️ Interactive Real-Time Category Filter Bar
@@ -36,7 +47,7 @@
 
 ### 🎧 Synchronized Listen Together
 - Host or join synchronized listening rooms with friends anywhere in the world.
-- Seamless playback synchronization with zero latency.
+- Real-time playback synchronization with zero latency.
 
 ### 🛡️ Core Music Player Features
 - **Zero Ads:** Complete uninterrupted music experience with no audio ads or sponsor interruptions.
@@ -64,14 +75,17 @@
 
 ## 📥 Download & Installation
 
-### Option 1: Official Website
-Visit the official [TideFlow Website](https://Nirav-kumar-dev.github.io/TideFlow/) to view real-time download counts and grab the latest APK with one click.
+### Option 1: In-App Updates (Recommended)
+If you already have TidelFlow installed, go to **Settings → Check for updates** or tap the update notification to download and install new versions directly.
 
-### Option 2: GitHub Releases
-1. Head over to the [Releases](https://github.com/Nirav-kumar-dev/TideFlow/releases) page.
-2. Under **Assets**, download `TideFlow.apk` or `app-arm64-foss-debug.apk`.
-3. Open the APK on your Android device (ensure *"Install from unknown sources"* is enabled if prompted).
-4. Launch **TideFlow** and enjoy pure music streaming!
+### Option 2: Official Website
+Visit the official [TidelFlow Website](https://Nirav-kumar-dev.github.io/TideFlow/) to grab the latest APK with one click.
+
+### Option 3: GitHub Releases
+1. Head over to the [GitHub Releases](https://github.com/Nirav-kumar-dev/TideFlow/releases) page.
+2. Under **Assets**, download `TideFlow.apk`.
+3. Open the APK on your Android device (allow *"Install unknown apps"* if prompted).
+4. Launch **TidelFlow** and enjoy pure music streaming!
 
 ---
 
@@ -106,5 +120,4 @@ cd TideFlow
 ---
 
 ## 📄 License
-This project is licensed under the [GNU General Public License v3.0](LICENSE).
-
+This project is licensed under the [MIT License](LICENSE).
