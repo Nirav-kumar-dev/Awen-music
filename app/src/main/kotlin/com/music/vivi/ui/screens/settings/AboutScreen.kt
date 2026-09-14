@@ -133,7 +133,7 @@ fun AboutScreen(
         ExpressiveSettingGroup(
             items = listOf(
                 Material3SettingsItem(
-                    title = { Text(stringResource(R.string.developer), color = MaterialTheme.colorScheme.primary) },
+                    title = { Text("Developer", color = MaterialTheme.colorScheme.primary) },
                     description = { Text("Nirav Kumar (@Nirav-kumar-dev)") },
                     leadingContent = {
                         AsyncImage(

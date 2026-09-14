@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import com.music.vivi.MainActivity
 import com.music.vivi.R
 import com.music.vivi.constants.EnableNotificationsKey
 import com.music.vivi.utils.dataStore
@@ -21,7 +22,7 @@ object UpdateNotificationHelper {
     private const val CHANNEL_ID = "updates"
     private const val NOTIFICATION_ID = 1001
 
-    fun showUpdateNotification(context: Context, versionName: String) {
+    fun showUpdateNotification(context: Context, versionName: String, apkUrl: String? = null) {
         val notificationsEnabled = context.dataStore.get(EnableNotificationsKey, true)
         if (!notificationsEnabled) return
 
@@ -31,28 +32,47 @@ object UpdateNotificationHelper {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 context.getString(R.string.app_updates_title),
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifications when a new app update is available"
+                enableLights(true)
+                enableVibration(true)
+            }
             nm.createNotificationChannel(channel)
         }
 
-        // Direct download URL format from vivimusicupdater - use the full tag (vX.X.X or bX.X.X) or nightly link
-        val apkUrl = if (versionName.contains("nightly", ignoreCase = true)) {
-            "https://nightly.link/vivizzz007/vivi-music/workflows/nightly.yml/main/vivi-music-gms-nightly.zip"
-        } else {
-            "https://github.com/vivizzz007/vivi-music/releases/download/$versionName/vivi.apk"
+        val effectiveApkUrl = apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/$versionName/TideFlow.apk"
+
+        val openAppIntent = Intent(context, MainActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            data = "vivi://update".toUri()
+            putExtra("open_screen", "update")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
-        val intent = Intent(Intent.ACTION_VIEW, apkUrl.toUri())
 
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        val pending = PendingIntent.getActivity(context, NOTIFICATION_ID, intent, flags)
+        val openAppPendingIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, openAppIntent, flags)
+
+        val downloadIntent = Intent(Intent.ACTION_VIEW, effectiveApkUrl.toUri())
+        val downloadPendingIntent = PendingIntent.getActivity(context, NOTIFICATION_ID + 1, downloadIntent, flags)
 
         val notif = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.vivimusicnotification)
-            .setContentTitle(context.getString(R.string.update_available_title))
-            .setContentText(versionName)
-            .setContentIntent(pending)
+            .setContentTitle("New Update Available: $versionName")
+            .setContentText("Tap to view changelog and update TideFlow")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(openAppPendingIntent)
             .setAutoCancel(true)
+            .addAction(
+                R.drawable.download,
+                "Download APK",
+                downloadPendingIntent
+            )
+            .addAction(
+                R.drawable.system_update_uptodate,
+                "View Details",
+                openAppPendingIntent
+            )
             .build()
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
@@ -60,5 +80,9 @@ object UpdateNotificationHelper {
         ) {
             NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notif)
         }
+    }
+
+    fun showTestUpdateNotification(context: Context) {
+        showUpdateNotification(context, "v1.0.0", "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/v1.0.0/TideFlow.apk")
     }
 }

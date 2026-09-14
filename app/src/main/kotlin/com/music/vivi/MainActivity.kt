@@ -433,14 +433,14 @@ class MainActivity : ComponentActivity() {
                 delay(2000L)
                 checkForUpdate(
                     context = context,
-                    onSuccess = { latestVersion, isAvailable, _, _, _, _, _, _ ->
+                    onSuccess = { latestVersion, isAvailable, _, _, _, _, _, apkUrl ->
                         val currentVersion = BuildConfig.VERSION_NAME
                         Log.d("UpdateCheck", "Startup check success. Latest: $latestVersion, Current: $currentVersion, isAvailable: $isAvailable")
                         saveUpdateAvailableState(context, isAvailable)
 
                         if (isAvailable && getUpdateNotificationsSetting(context)) {
                             Log.d("UpdateCheck", "Posting update notification for $latestVersion")
-                            UpdateNotificationHelper.showUpdateNotification(context, latestVersion)
+                            UpdateNotificationHelper.showUpdateNotification(context, latestVersion, apkUrl)
                         }
 
                         // Stamp today so no more nightly checks until tomorrow 9 PM
@@ -571,11 +571,11 @@ class MainActivity : ComponentActivity() {
         ) {
             if (lastSeenStarPromptVersion != currentVersion && !hasStarredRepo && !isStarred) {
                 ActionPromptDialog(
-                    title = "Support ViviMusic \u2B50",
+                    title = "Support TideFlow ⭐",
                     onDismiss = { setLastSeenStarPromptVersion(currentVersion) },
                     onConfirm = {
                         setLastSeenStarPromptVersion(currentVersion)
-                        uriHandler.openUri("https://github.com/vivizzz007/vivi-music")
+                        uriHandler.openUri("https://github.com/Nirav-kumar-dev/TideFlow")
                     },
                     onCancel = { setLastSeenStarPromptVersion(currentVersion) },
                     content = {
@@ -586,7 +586,7 @@ class MainActivity : ComponentActivity() {
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = "If you enjoy using ViviMusic, would you consider starring our repository on GitHub?",
+                                text = "If you enjoy using TideFlow, would you consider starring our repository on GitHub?",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -1415,9 +1415,19 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleDeepLinkIntent(intent: Intent, navController: NavHostController) {
+        if (intent.getStringExtra("open_screen") == "update") {
+            intent.removeExtra("open_screen")
+            navController.navigate("update")
+            return
+        }
         val uri = intent.data ?: intent.extras?.getString(Intent.EXTRA_TEXT)?.toUri() ?: return
         intent.data = null
         intent.removeExtra(Intent.EXTRA_TEXT)
+
+        if ((uri.scheme == "vivi" || uri.scheme == "tideflow") && (uri.host == "update" || uri.pathSegments.firstOrNull() == "update")) {
+            navController.navigate("update")
+            return
+        }
         val coroutineScope = lifecycle.coroutineScope
 
         val listenCode = uri.getQueryParameter("code")

@@ -289,7 +289,12 @@ fun AccountSettingsScreen(
                                 trailingContent = {
                                     Switch(
                                         checked = ytmSync,
-                                        onCheckedChange = onYtmSyncChange,
+                                        onCheckedChange = { enabled ->
+                                            onYtmSyncChange(enabled)
+                                            if (enabled) {
+                                                accountSettingsViewModel.forceSyncLibrary()
+                                            }
+                                        },
                                         thumbContent = {
                                             Icon(
                                                 painter = painterResource(
@@ -301,7 +306,13 @@ fun AccountSettingsScreen(
                                         }
                                     )
                                 },
-                                onClick = { onYtmSyncChange(!ytmSync) }
+                                onClick = {
+                                    val next = !ytmSync
+                                    onYtmSyncChange(next)
+                                    if (next) {
+                                        accountSettingsViewModel.forceSyncLibrary()
+                                    }
+                                }
                             ),
                             // Overall Force Library Sync button
                             Material3SettingsItem(
@@ -463,7 +474,7 @@ fun AccountSettingsScreen(
                         ),
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {
-                            uriHandler.safeOpenUri(context, "https://github.com/vivizzz007/vivi-music/issues")
+                            uriHandler.safeOpenUri(context, "https://github.com/Nirav-kumar-dev/TideFlow/issues")
                         }
                     )
                 }

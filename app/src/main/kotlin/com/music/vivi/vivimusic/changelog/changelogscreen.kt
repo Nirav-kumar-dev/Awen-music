@@ -139,9 +139,9 @@ fun ChangelogScreen(
                         showingCached = true
                     }
                 } else {
-                    val changelogUrl = URL("https://github.com/vivizzz007/vivi-music/releases/download/$tag/changelog.json")
+                    val changelogUrl = URL("https://github.com/Nirav-kumar-dev/TideFlow/releases/download/$tag/changelog.json")
                     val connection = changelogUrl.openConnection() as HttpURLConnection
-                    connection.setRequestProperty("User-Agent", "ViviMusic-Changelog-App")
+                    connection.setRequestProperty("User-Agent", "TideFlowApp")
                     connection.setRequestProperty("Accept", "application/json")
                     
                     if (connection.responseCode == 200) {
@@ -170,7 +170,6 @@ fun ChangelogScreen(
                                         sections.add(ChangelogSection(title, items))
                                     }
                                 } else {
-                                    // Fallback: This is the old format (Array of Strings)
                                     val item = changelogArray.optString(i, "")
                                     if (item.isNotBlank()) {
                                         if (sections.isEmpty() || sections[0].title.isNotBlank()) {
@@ -193,8 +192,46 @@ fun ChangelogScreen(
                             showingCached = false
                         }
                     } else {
-                        Log.e("ChangelogScreen", "HTTP Error ${connection.responseCode} for $tag")
-                        withContext(Dispatchers.Main) { hasError = true; isLoading = false }
+                        // Fallback: fetch release details directly from GitHub API and parse body
+                        val releaseApiUrl = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/releases/tags/$tag")
+                        val apiConn = releaseApiUrl.openConnection() as HttpURLConnection
+                        apiConn.setRequestProperty("User-Agent", "TideFlowApp")
+                        apiConn.setRequestProperty("Accept", "application/vnd.github+json")
+                        if (apiConn.responseCode == 200) {
+                            val relJson = apiConn.inputStream.bufferedReader().use { it.readText() }
+                            val relObj = JSONObject(relJson)
+                            val body = relObj.optString("body", "")
+                            val lines = body.split("\n").map { it.trim() }.filter { it.isNotBlank() }
+                            val sections = mutableListOf<ChangelogSection>()
+                            var currentTitle = "Release Notes"
+                            var currentItems = mutableListOf<String>()
+                            for (line in lines) {
+                                if (line.startsWith("#")) {
+                                    if (currentItems.isNotEmpty()) {
+                                        sections.add(ChangelogSection(currentTitle, currentItems))
+                                        currentItems = mutableListOf()
+                                    }
+                                    currentTitle = line.trimStart('#').trim()
+                                } else {
+                                    currentItems.add(line.trimStart('-', '*', ' '))
+                                }
+                            }
+                            if (currentItems.isNotEmpty()) {
+                                sections.add(ChangelogSection(currentTitle, currentItems))
+                            }
+                            val relName = relObj.optString("name", tag)
+                            saveChangelogToCache(context, tag, sections, null, relName, null)
+                            withContext(Dispatchers.Main) {
+                                changelogSections = sections
+                                updateDescription = relName
+                                isLoading = false
+                                hasError = false
+                                showingCached = false
+                            }
+                        } else {
+                            Log.e("ChangelogScreen", "HTTP Error ${connection.responseCode} for $tag")
+                            withContext(Dispatchers.Main) { hasError = true; isLoading = false }
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -212,9 +249,9 @@ fun ChangelogScreen(
         isFetchingOldReleases = true
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                val releasesUrl = URL("https://api.github.com/repos/vivizzz007/vivi-music/releases")
+                val releasesUrl = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/releases")
                 val connection = releasesUrl.openConnection() as HttpURLConnection
-                connection.setRequestProperty("User-Agent", "ViviMusic-Changelog-App")
+                connection.setRequestProperty("User-Agent", "TideFlowApp")
                 connection.setRequestProperty("Accept", "application/vnd.github+json")
                 
                 if (connection.responseCode == 200) {
@@ -244,7 +281,7 @@ fun ChangelogScreen(
                         }
                     }
 
-                    if (changelogUrl != null) {
+                    if (changelogUrl != null || obj.optString("body").isNotBlank()) {
                         list.add(ReleaseMetadata(tagName, name, formattedDate, null))
                     }
                 }

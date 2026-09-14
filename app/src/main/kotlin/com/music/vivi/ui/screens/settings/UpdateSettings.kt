@@ -272,6 +272,15 @@ fun UpdateSettings(
                     onClick = {
                         navController.navigate("settings/update/notification_permission")
                     }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.system_update_uptodate),
+                    title = { Text("Test Update Notification") },
+                    description = { Text("Send a preview update notification to your status bar") },
+                    onClick = {
+                        com.music.vivi.vivimusic.UpdateNotificationHelper.showTestUpdateNotification(context)
+                        Toast.makeText(context, "Update notification posted!", Toast.LENGTH_SHORT).show()
+                    }
                 )
             )
         )

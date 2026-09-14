@@ -13,18 +13,35 @@ import com.music.vivi.constants.InnerTubeCookieKey
 import com.music.vivi.constants.YtmSyncKey
 import com.music.vivi.utils.dataStore
 import com.music.vivi.utils.get
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
+suspend fun Context.isSyncEnabledSuspend(): Boolean {
+    return dataStore.get(YtmSyncKey, true) && isUserLoggedInSuspend()
+}
+
+suspend fun Context.isUserLoggedInSuspend(): Boolean {
+    val cookie = dataStore.get(InnerTubeCookieKey, "")
+    return ("SAPISID" in parseCookieString(cookie) || "__Secure-3PSID" in parseCookieString(cookie)) && isInternetConnected()
+}
+
 fun Context.isSyncEnabled(): Boolean {
-    return runBlocking {
-        dataStore.get(YtmSyncKey, true) && isUserLoggedIn()
+    return try {
+        runBlocking(Dispatchers.IO) {
+            isSyncEnabledSuspend()
+        }
+    } catch (_: Exception) {
+        true
     }
 }
 
 fun Context.isUserLoggedIn(): Boolean {
-    return runBlocking {
-        val cookie = dataStore[InnerTubeCookieKey] ?: ""
-        "SAPISID" in parseCookieString(cookie) && isInternetConnected()
+    return try {
+        runBlocking(Dispatchers.IO) {
+            isUserLoggedInSuspend()
+        }
+    } catch (_: Exception) {
+        false
     }
 }
 

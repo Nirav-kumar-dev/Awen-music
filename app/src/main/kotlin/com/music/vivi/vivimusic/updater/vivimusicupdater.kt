@@ -66,6 +66,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -220,9 +221,7 @@ fun UpdateScreen(navController: NavHostController) {
     }
 
     LaunchedEffect(Unit) {
-        if (autoUpdateCheckEnabled) {
-            triggerUpdateCheck()
-        }
+        triggerUpdateCheck()
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -314,20 +313,13 @@ fun UpdateScreen(navController: NavHostController) {
                                                     ContextCompat.startActivity(context, installIntent, null)
                                                 }
                                             } else {
-                                                val targetApkName = if (BuildConfig.FLAVOR.contains("foss", ignoreCase = true)) "izzydroid-universal-foss-release.apk" else "vivi.apk"
-                                                val urlToDownload = currentStatus.apkUrl ?: "https://github.com/vivizzz007/vivi-music/releases/download/${currentStatus.version}/$targetApkName"
-                                                
-                                                if (BuildConfig.FLAVOR.contains("foss", ignoreCase = true)) {
-                                                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToDownload))
-                                                    ContextCompat.startActivity(context, browserIntent, null)
-                                                } else {
-                                                    val downloadRequest = OneTimeWorkRequestBuilder<UpdateDownloadWorker>()
-                                                        .setInputData(workDataOf("apk_url" to urlToDownload, "version" to currentStatus.version, "file_size" to currentStatus.size))
-                                                        .addTag("update_download")
-                                                        .build()
-                                                    WorkManager.getInstance(context).enqueueUniqueWork("update_download", ExistingWorkPolicy.REPLACE, downloadRequest)
-                                                    isDownloading = true
-                                                }
+                                                val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/TideFlow.apk"
+                                                val downloadRequest = OneTimeWorkRequestBuilder<UpdateDownloadWorker>()
+                                                    .setInputData(workDataOf("apk_url" to urlToDownload, "version" to currentStatus.version, "file_size" to currentStatus.size))
+                                                    .addTag("update_download")
+                                                    .build()
+                                                WorkManager.getInstance(context).enqueueUniqueWork("update_download", ExistingWorkPolicy.REPLACE, downloadRequest)
+                                                isDownloading = true
                                             }
                                         },
                                         modifier = Modifier.fillMaxWidth().height(56.dp)
@@ -500,7 +492,7 @@ fun UpdateScreen(navController: NavHostController) {
                                             else -> "V${rawVersion.uppercase()}"
                                         }
                                         Text(
-                                            text = "VIVI MUSIC VERSION $displayVer",
+                                            text = "TIDEFLOW VERSION $displayVer",
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onBackground
@@ -786,14 +778,15 @@ suspend fun checkForUpdate(
 ) {
     withContext(Dispatchers.IO) {
         try {
-            val url = URL("https://api.github.com/repos/vivizzz007/vivi-music/releases")
-            val json = url.openStream().bufferedReader().use { it.readText() }
+            val url = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/releases")
+            val connection = url.openConnection() as HttpURLConnection
+            connection.setRequestProperty("User-Agent", "TideFlowApp")
+            connection.setRequestProperty("Accept", "application/vnd.github+json")
+            val json = connection.inputStream.bufferedReader().use { it.readText() }
             val releases = JSONArray(json)
             
             val currentVersion = BuildConfig.VERSION_NAME
             val betaEnabled = getBetaUpdatesSetting(context)
-
-
 
             var bestStableRelease: JSONObject? = null
             var bestOverallRelease: JSONObject? = null
@@ -821,32 +814,9 @@ suspend fun checkForUpdate(
 
             if (targetRelease != null) {
                 val targetTagName = targetRelease.getString("tag_name")
+                // Strictly check if the target release version is newer than current app version
                 val isNewer = isNewerVersion(targetTagName, currentVersion)
-                
-                // Track Switch Logic:
-                // If the user has disabled beta updates, we should offer the latest stable release
-                // even if it's technically a lower version number than their current beta/custom build.
-                // This allows users to correctly "roll back" to the stable track.
-                val currentIsBeta = currentVersion.startsWith("b")
-                val targetIsStable = targetTagName.startsWith("v")
-                
-                // Compare version numbers ignoring prefixes
-                val currentClean = currentVersion.removePrefix("b").removePrefix("v")
-                val targetClean = targetTagName.removePrefix("b").removePrefix("v")
-                val isDifferentVersion = currentClean != targetClean
-                
-                var shouldShow = isNewer
-                if (!shouldShow && !betaEnabled) {
-                    // Logic: If I'm on a Beta (b5.0.7) and latest stable is v5.0.6, 
-                    // and I just turned OFF beta, I want to see v5.0.6.
-                    if (currentIsBeta && targetIsStable) {
-                        shouldShow = true
-                    } else if (isDifferentVersion && targetIsStable) {
-                        // Also show if current is a newer unofficial stable (e.g. built locally as 5.0.7)
-                        // but user wants the official stable 5.0.6.
-                        shouldShow = true
-                    }
-                }
+                val shouldShow = isNewer
 
                 if (shouldShow) {
                     val tagWithPrefix = targetRelease.getString("tag_name")
@@ -858,7 +828,7 @@ suspend fun checkForUpdate(
                     var imageUrl: String? = null
                     try {
                         val changelogUrl =
-                            URL("https://github.com/vivizzz007/vivi-music/releases/download/$tagWithPrefix/changelog.json?t=${System.currentTimeMillis()}")
+                            URL("https://github.com/Nirav-kumar-dev/TideFlow/releases/download/$tagWithPrefix/changelog.json?t=${System.currentTimeMillis()}")
                         val changelogJson = changelogUrl.openStream().bufferedReader().use { it.readText() }
                         val changelogData = JSONObject(changelogJson)
 
@@ -891,10 +861,25 @@ suspend fun checkForUpdate(
                             changelogList.add(ChangelogSection(title, itemsList, secDesc, blocksList))
                         }
                     } catch (e: Exception) {
-                        // Fallback: Parse body as a single list if it starts with characters or split by lines
+                        // Fallback: Parse release body into clean sections
                         val body = targetRelease.optString("body", context.getString(R.string.no_changelog_available))
-                        val fallbackItems = body.split("\n").filter { it.isNotBlank() }
-                        changelogList.add(ChangelogSection(context.getString(R.string.changelog), fallbackItems))
+                        val lines = body.split("\n").map { it.trim() }.filter { it.isNotBlank() }
+                        var currentTitle = context.getString(R.string.changelog)
+                        var currentItems = mutableListOf<String>()
+                        for (line in lines) {
+                            if (line.startsWith("#")) {
+                                if (currentItems.isNotEmpty()) {
+                                    changelogList.add(ChangelogSection(currentTitle, currentItems))
+                                    currentItems = mutableListOf()
+                                }
+                                currentTitle = line.trimStart('#').trim()
+                            } else {
+                                currentItems.add(line.trimStart('-', '*', ' '))
+                            }
+                        }
+                        if (currentItems.isNotEmpty()) {
+                            changelogList.add(ChangelogSection(currentTitle, currentItems))
+                        }
                     }
 
                     val publishedAt = targetRelease.getString("published_at")
@@ -903,16 +888,33 @@ suspend fun checkForUpdate(
 
                     var apkSizeInMB = ""
                     var apkDownloadUrl = ""
-                    val expectedApkName = if (BuildConfig.FLAVOR.contains("foss", ignoreCase = true)) "izzydroid-universal-foss-release.apk" else "vivi.apk"
+                    var fallbackApkUrl = ""
+                    var fallbackApkSize = ""
                     for (j in 0 until assets.length()) {
                         val asset = assets.getJSONObject(j)
                         val assetName = asset.getString("name")
-                        if (assetName == expectedApkName) {
+                        if (assetName.endsWith(".apk", ignoreCase = true)) {
                             val apkSizeInBytes = asset.getLong("size")
-                            apkSizeInMB = String.format("%.1f", apkSizeInBytes / (1024.0 * 1024.0))
-                            apkDownloadUrl = asset.getString("browser_download_url")
-                            break
+                            val sizeMB = String.format(java.util.Locale.US, "%.1f", apkSizeInBytes / (1024.0 * 1024.0))
+                            val downloadUrl = asset.getString("browser_download_url")
+
+                            val isFlavorMatch = (BuildConfig.FLAVOR.contains("foss", ignoreCase = true) && assetName.contains("foss", ignoreCase = true)) ||
+                                                (BuildConfig.FLAVOR.contains("gms", ignoreCase = true) && assetName.contains("gms", ignoreCase = true)) ||
+                                                assetName.equals("TideFlow.apk", ignoreCase = true)
+                            if (isFlavorMatch) {
+                                apkSizeInMB = sizeMB
+                                apkDownloadUrl = downloadUrl
+                                break
+                            } else if (fallbackApkUrl.isEmpty()) {
+                                fallbackApkSize = sizeMB
+                                fallbackApkUrl = downloadUrl
+                            }
                         }
+                    }
+
+                    if (apkDownloadUrl.isEmpty() && fallbackApkUrl.isNotEmpty()) {
+                        apkDownloadUrl = fallbackApkUrl
+                        apkSizeInMB = fallbackApkSize
                     }
 
                     if (apkDownloadUrl.isNotEmpty()) {

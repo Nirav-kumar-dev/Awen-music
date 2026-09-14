@@ -1249,6 +1249,8 @@ private fun YouTubeLoginDialog(
                                                             it[AccountNameKey] = info.name
                                                             it[AccountEmailKey] = info.email.orEmpty()
                                                             it[AccountChannelHandleKey] = info.channelHandle.orEmpty()
+                                                            it[YtmSyncKey] = true
+                                                            it[LastFullSyncKey] = 0L
                                                         }
                                                         onLoginSuccess(info.name, info.channelHandle.orEmpty())
                                                     }?.onFailure {

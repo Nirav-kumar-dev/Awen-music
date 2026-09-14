@@ -53,10 +53,12 @@ import com.music.vivi.ai.NemotronAIResult
 import com.music.vivi.ai.NemotronAIService
 import com.music.vivi.ai.NemotronSong
 import com.music.vivi.ai.NemotronUserContext
+import com.music.vivi.ai.storage.AiAgentStorage
 import com.music.vivi.db.entities.PlaylistEntity
 import com.music.vivi.db.entities.PlaylistSongMap
 import com.music.vivi.db.entities.SongEntity
 import com.music.vivi.models.toMediaMetadata
+import com.music.vivi.playback.queues.AiPlaylistQueue
 import com.music.vivi.playback.queues.YouTubeQueue
 import com.music.vivi.ui.screens.PremiumTheme
 import com.music.vivi.ui.utils.resize
@@ -93,17 +95,18 @@ fun NemotronAIBottomSheet(
 
     LaunchedEffect(Unit) {
         userContext = NemotronUserContext.load(context, database)
+        AiAgentStorage.syncUserProfile(context, database)
     }
 
     val quickMoods = remember {
         listOf(
+            "Fresh 2026 & 2025 Bangers",
+            "Hits & New Releases Mix",
             "Late Night Drive",
             "Deep Focus & Code",
             "Workout Beast Mode",
-            "Heartbreak Acoustic",
             "Cyberpunk Synthwave",
-            "Chill Coffee Shop",
-            "Rainy Day Melancholy",
+            "Chill Acoustic Morning",
             "Energetic Pop Hits"
         )
     }
@@ -117,7 +120,7 @@ fun NemotronAIBottomSheet(
 
         scope.launch {
             val ctx = userContext ?: NemotronUserContext.load(context, database)
-            val result = NemotronAIService.queryMusicAI(prompt, ctx)
+            val result = NemotronAIService.queryMusicAI(prompt, ctx, context)
             result.onSuccess { aiResult ->
                 uiState = NemotronSheetState.Result(aiResult)
             }.onFailure { err ->
@@ -476,6 +479,37 @@ fun NemotronAIBottomSheet(
                     is NemotronSheetState.Result -> {
                         val result = state.data
 
+                        val playTrackAt: (NemotronSong, Int) -> Unit = { targetSong, indexHint ->
+                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            scope.launch {
+                                var resolvedItem = targetSong.songItem
+                                if (resolvedItem == null) {
+                                    resolvedItem = NemotronAIService.resolveSingleTrack(targetSong)
+                                }
+                                val playable = result.songs.mapNotNull { it.songItem }
+                                if (playable.isNotEmpty()) {
+                                    val startIdx = if (resolvedItem != null) {
+                                        playable.indexOfFirst { it.id == resolvedItem.id }.takeIf { it >= 0 }
+                                            ?: indexHint.coerceIn(0, playable.size - 1)
+                                    } else {
+                                        indexHint.coerceIn(0, playable.size - 1)
+                                    }
+                                    AiAgentStorage.updateSessionFeedback(context, result.playlistTitle, wasPlayed = true)
+                                    playerConnection?.playQueue(
+                                        AiPlaylistQueue(
+                                            title = result.playlistTitle,
+                                            initialSongs = playable,
+                                            startIndex = startIdx
+                                        )
+                                    )
+                                } else {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, "No playable tracks found", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 6.dp),
@@ -573,11 +607,14 @@ fun NemotronAIBottomSheet(
                                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                     val playable = result.songs.mapNotNull { it.songItem }
                                                     if (playable.isNotEmpty()) {
-                                                        val first = playable.first()
+                                                        scope.launch {
+                                                            AiAgentStorage.updateSessionFeedback(context, result.playlistTitle, wasPlayed = true)
+                                                        }
                                                         playerConnection?.playQueue(
-                                                            YouTubeQueue(
-                                                                first.endpoint ?: WatchEndpoint(videoId = first.id),
-                                                                first.toMediaMetadata()
+                                                            AiPlaylistQueue(
+                                                                title = result.playlistTitle,
+                                                                initialSongs = playable,
+                                                                startIndex = 0
                                                             )
                                                         )
                                                         onDismiss()
@@ -614,6 +651,7 @@ fun NemotronAIBottomSheet(
                                                     if (!isSavedToLibrary) {
                                                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                         scope.launch(Dispatchers.IO) {
+                                                            AiAgentStorage.updateSessionFeedback(context, result.playlistTitle, wasSaved = true)
                                                             val playlistEntity = PlaylistEntity(
                                                                 name = result.playlistTitle,
                                                                 bookmarkedAt = LocalDateTime.now(),
@@ -690,15 +728,7 @@ fun NemotronAIBottomSheet(
                                         .background(PremiumTheme.SurfaceCard)
                                         .border(1.dp, PremiumTheme.CardBorder, RoundedCornerShape(16.dp))
                                         .clickable {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            if (songItem != null) {
-                                                playerConnection?.playQueue(
-                                                    YouTubeQueue(
-                                                        songItem.endpoint ?: WatchEndpoint(videoId = songItem.id),
-                                                        songItem.toMediaMetadata()
-                                                    )
-                                                )
-                                            }
+                                            playTrackAt(song, index)
                                         }
                                         .padding(horizontal = 14.dp, vertical = 10.dp)
                                 ) {
@@ -765,15 +795,7 @@ fun NemotronAIBottomSheet(
                                         // Play Icon
                                         IconButton(
                                             onClick = {
-                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                                if (songItem != null) {
-                                                    playerConnection?.playQueue(
-                                                        YouTubeQueue(
-                                                            songItem.endpoint ?: WatchEndpoint(videoId = songItem.id),
-                                                            songItem.toMediaMetadata()
-                                                        )
-                                                    )
-                                                }
+                                                playTrackAt(song, index)
                                             },
                                             modifier = Modifier.size(32.dp)
                                         ) {

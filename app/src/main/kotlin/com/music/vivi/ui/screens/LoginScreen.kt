@@ -50,7 +50,9 @@ import com.music.vivi.constants.AccountEmailKey
 import com.music.vivi.constants.AccountNameKey
 import com.music.vivi.constants.DataSyncIdKey
 import com.music.vivi.constants.InnerTubeCookieKey
+import com.music.vivi.constants.LastFullSyncKey
 import com.music.vivi.constants.VisitorDataKey
+import com.music.vivi.constants.YtmSyncKey
 import com.music.vivi.ui.component.IconButton
 import com.music.vivi.ui.component.InfoLabel
 import com.music.vivi.ui.component.snackbar.SnackbarManager
@@ -80,6 +82,8 @@ fun LoginScreen(
     var accountName by rememberPreference(AccountNameKey, "")
     var accountEmail by rememberPreference(AccountEmailKey, "")
     var accountChannelHandle by rememberPreference(AccountChannelHandleKey, "")
+    var ytmSync by rememberPreference(YtmSyncKey, true)
+    var lastFullSync by rememberPreference(LastFullSyncKey, 0L)
 
     var readyToConfirm by remember { mutableStateOf(false) }
     var isConfirming by remember { mutableStateOf(false) }
@@ -129,6 +133,8 @@ fun LoginScreen(
                 accountName = it.name
                 accountEmail = it.email.orEmpty()
                 accountChannelHandle = it.channelHandle.orEmpty()
+                ytmSync = true
+                lastFullSync = 0L
 
                 Timber.d("Login: Successfully logged in as ${it.name}, restarting app...")
 

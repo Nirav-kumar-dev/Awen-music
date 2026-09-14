@@ -25,9 +25,9 @@ android {
         applicationId = "com.tideflow.music"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
+        versionCode = 2
         val betaVersionName = project.findProperty("betaVersionName") as String?
-        versionName = betaVersionName ?: "1.0"
+        versionName = betaVersionName ?: "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

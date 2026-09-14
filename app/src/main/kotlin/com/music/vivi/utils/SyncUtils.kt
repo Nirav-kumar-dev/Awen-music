@@ -28,6 +28,7 @@ import com.music.vivi.db.entities.SongEntity
 import com.music.vivi.extensions.collectLatest
 import com.music.vivi.extensions.isInternetConnected
 import com.music.vivi.extensions.isSyncEnabled
+import com.music.vivi.extensions.isSyncEnabledSuspend
 import com.music.vivi.models.toMediaMetadata
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
@@ -218,7 +219,7 @@ class SyncUtils @Inject constructor(
                 return@launch
             }
 
-            if (!context.isSyncEnabled() || !context.isInternetConnected()) {
+            if (!context.isSyncEnabledSuspend() || !context.isInternetConnected()) {
                 return@launch
             }
 

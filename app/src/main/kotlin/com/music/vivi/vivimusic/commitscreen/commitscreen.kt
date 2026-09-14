@@ -64,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
+import java.net.HttpURLConnection
 import java.net.URL
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -103,8 +104,11 @@ fun CommitScreen(
         hasError = false
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                val url = URL("https://api.github.com/repos/vivizzz007/vivi-music/commits?branch=main&per_page=50")
-                val json = url.openStream().bufferedReader().use { it.readText() }
+                val url = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/commits?branch=main&per_page=50")
+                val connection = url.openConnection() as HttpURLConnection
+                connection.setRequestProperty("User-Agent", "TideFlowApp")
+                connection.setRequestProperty("Accept", "application/vnd.github+json")
+                val json = connection.inputStream.bufferedReader().use { it.readText() }
                 val array = JSONArray(json)
                 val outputFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault())
 
