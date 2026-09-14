@@ -1,6 +1,6 @@
 {
   "version": "1.0.2",
-  "description": "TideFlow 1.0.2 - Fixed In-App APK Updater Permissions, Consolidated FileProvider & Smooth Install Flow",
+  "description": "TidelFlow 1.0.2 - Fixed In-App APK Updater Permissions, Consolidated FileProvider & Smooth Install Flow",
   "changelog": [
     {
       "title": "In-App Updater & APK Installation",

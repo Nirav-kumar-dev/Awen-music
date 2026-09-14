@@ -438,7 +438,7 @@ fun UpdateScreen(navController: NavHostController) {
                             else -> "V${rawVersion.uppercase()}"
                         }
                         Text(
-                            text = "VIVI MUSIC $displayVer",
+                            text = "TIDELFLOW $displayVer",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground,
@@ -534,7 +534,7 @@ fun UpdateScreen(navController: NavHostController) {
                                             else -> "V${rawVersion.uppercase()}"
                                         }
                                         Text(
-                                            text = "TIDEFLOW VERSION $displayVer",
+                                            text = "TIDELFLOW VERSION $displayVer",
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onBackground
