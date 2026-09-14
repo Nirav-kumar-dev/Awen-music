@@ -1,31 +1,31 @@
 {
-  "version": "1.0.1",
-  "description": "TideFlow 1.0.1 - Smarter AI Playlists, Guaranteed Novelty, Non-Blocking YouTube Sync, MIT License & Updater Fixes",
+  "version": "1.0.2",
+  "description": "TideFlow 1.0.2 - Fixed In-App APK Updater Permissions, Consolidated FileProvider & Smooth Install Flow",
   "changelog": [
+    {
+      "title": "In-App Updater & APK Installation",
+      "items": [
+        "Added REQUEST_INSTALL_PACKAGES permission to AndroidManifest.xml, resolving in-app update installation failure on Android 8.0+.",
+        "Consolidated FileProvider authorities and paths, ensuring seamless URI resolution for downloaded update packages.",
+        "Added external-files-path and files-path support in provider_paths.xml.",
+        "Streamlined install flow with automatic installation launch as soon as 'Install unknown apps' permission is enabled."
+      ]
+    },
     {
       "title": "AI Assistant & Playlist Engine",
       "items": [
-        "Fixed playlist playback: Hitting 'Play' or tapping any song now queues and plays the entire AI playlist seamlessly instead of single isolated tracks.",
-        "Introduced AiPlaylistQueue with seamless YouTube Radio auto-continuation after playlist finishes.",
-        "Guaranteed fresh & new playlist on every request with intelligent non-repetition memory and randomized track selection.",
-        "Dedicated separate persistent JSON storage for AI agent memory, user listening preferences, and sessions.",
-        "Lightning-fast AI responses powered by NVIDIA Nemotron 3.5 Lightning 30B."
+        "Full AI playlist queueing with continuous YouTube Radio auto-continuation.",
+        "Guaranteed track novelty and intelligent non-repetition memory.",
+        "Dedicated persistent storage for AI agent memories and session history.",
+        "Powered by ultra-fast NVIDIA Nemotron 3.5 Lightning 30B."
       ]
     },
     {
-      "title": "YouTube Music Synchronization",
+      "title": "Core Improvements",
       "items": [
-        "Made YouTube Music sync completely non-blocking, eliminating thread contention and UI stalls.",
-        "Automatic background synchronization on startup and login.",
-        "Instant force sync trigger when toggled in Account Settings."
-      ]
-    },
-    {
-      "title": "App Updater & Licensing",
-      "items": [
-        "Fixed updater version comparison: strictly requires release version to be newer than installed version, preventing false update notifications.",
-        "Changed project license to standard MIT License.",
-        "Updated branding and visual consistency across all screens."
+        "Non-blocking background YouTube Music synchronization.",
+        "Strict version check logic preventing spurious update notifications.",
+        "Full MIT License compliance."
       ]
     }
   ]

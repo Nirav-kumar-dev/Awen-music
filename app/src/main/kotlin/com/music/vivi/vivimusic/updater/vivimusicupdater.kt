@@ -11,6 +11,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -138,6 +141,30 @@ fun UpdateScreen(navController: NavHostController) {
 
     val currentVersion = BuildConfig.VERSION_NAME
     val autoUpdateCheckEnabled = getAutoUpdateCheckSetting(context)
+
+    val installPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (context.packageManager.canRequestPackageInstalls()) {
+                downloadedFile?.let { file ->
+                    if (file.exists()) {
+                        try {
+                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.FileProvider", file)
+                            val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                                setDataAndType(uri, "application/vnd.android.package-archive")
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(installIntent)
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Error opening installer: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         DownloadNotificationManager.initialize(context)
@@ -294,23 +321,38 @@ fun UpdateScreen(navController: NavHostController) {
                                                     downloadProgress = 0f
                                                     return@Button
                                                 }
-                                                file.let { f ->
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                        if (!context.packageManager.canRequestPackageInstalls()) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                    if (!context.packageManager.canRequestPackageInstalls()) {
+                                                        Toast.makeText(context, "Please allow TideFlow to install unknown apps, then tap Install", Toast.LENGTH_LONG).show()
+                                                        try {
                                                             val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
                                                                 data = Uri.parse("package:${context.packageName}")
+                                                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                                             }
-                                                            context.startActivity(intent)
-                                                            return@let
+                                                            installPermissionLauncher.launch(intent)
+                                                        } catch (e: Exception) {
+                                                            try {
+                                                                val intent = Intent(android.provider.Settings.ACTION_SECURITY_SETTINGS).apply {
+                                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                                }
+                                                                installPermissionLauncher.launch(intent)
+                                                            } catch (_: Exception) {
+                                                                Toast.makeText(context, "Could not open install settings", Toast.LENGTH_SHORT).show()
+                                                            }
                                                         }
+                                                        return@Button
                                                     }
+                                                }
+                                                try {
                                                     val uri = FileProvider.getUriForFile(context, "${context.packageName}.FileProvider", file)
                                                     val installIntent = Intent(Intent.ACTION_VIEW).apply {
                                                         setDataAndType(uri, "application/vnd.android.package-archive")
                                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                                     }
-                                                    ContextCompat.startActivity(context, installIntent, null)
+                                                    context.startActivity(installIntent)
+                                                } catch (e: Exception) {
+                                                    Toast.makeText(context, "Cannot launch installer: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                                                 }
                                             } else {
                                                 val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/TideFlow.apk"
