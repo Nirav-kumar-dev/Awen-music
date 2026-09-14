@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -189,17 +190,29 @@ object DownloadNotificationManager {
 
     @RequiresApi(Build.VERSION_CODES.BAKLAVA)
     private fun showDownloadCompleteModern(version: String, filePath: String) {
+        val uri = androidx.core.content.FileProvider.getUriForFile(
+            appContext,
+            "${appContext.packageName}.FileProvider",
+            java.io.File(filePath)
+        )
         val installIntent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(
-                androidx.core.content.FileProvider.getUriForFile(
-                    appContext,
-                    "${appContext.packageName}.FileProvider",
-                    java.io.File(filePath)
-                ),
-                "application/vnd.android.package-archive"
-            )
+            setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+        }
+        val resolveInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            appContext.packageManager.queryIntentActivities(
+                installIntent,
+                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong())
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            appContext.packageManager.queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY)
+        }
+        for (resolveInfo in resolveInfoList) {
+            appContext.grantUriPermission(resolveInfo.activityInfo.packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -303,17 +316,29 @@ object DownloadNotificationManager {
     }
 
     private fun showDownloadCompleteLegacy(version: String, filePath: String) {
+        val uri = androidx.core.content.FileProvider.getUriForFile(
+            appContext,
+            "${appContext.packageName}.FileProvider",
+            java.io.File(filePath)
+        )
         val installIntent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(
-                androidx.core.content.FileProvider.getUriForFile(
-                    appContext,
-                    "${appContext.packageName}.FileProvider",
-                    java.io.File(filePath)
-                ),
-                "application/vnd.android.package-archive"
-            )
+            setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+        }
+        val resolveInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            appContext.packageManager.queryIntentActivities(
+                installIntent,
+                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong())
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            appContext.packageManager.queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY)
+        }
+        for (resolveInfo in resolveInfoList) {
+            appContext.grantUriPermission(resolveInfo.activityInfo.packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
         val pendingIntent = PendingIntent.getActivity(

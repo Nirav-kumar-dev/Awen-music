@@ -8,6 +8,7 @@ package com.music.vivi.vivimusic.updater
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -147,20 +148,10 @@ fun UpdateScreen(navController: NavHostController) {
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (context.packageManager.canRequestPackageInstalls()) {
-                downloadedFile?.let { file ->
-                    if (file.exists()) {
-                        try {
-                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.FileProvider", file)
-                            val installIntent = Intent(Intent.ACTION_VIEW).apply {
-                                setDataAndType(uri, "application/vnd.android.package-archive")
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(installIntent)
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Error opening installer: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                        }
-                    }
+                val file = (if (downloadedFile?.exists() == true && (downloadedFile?.length() ?: 0) > 1024 * 1024) downloadedFile else null)
+                    ?: getLatestDownloadedApk(context)
+                if (file != null && file.exists()) {
+                    launchApkInstall(context, file)
                 }
             }
         }
@@ -168,6 +159,11 @@ fun UpdateScreen(navController: NavHostController) {
 
     LaunchedEffect(Unit) {
         DownloadNotificationManager.initialize(context)
+        val existing = getLatestDownloadedApk(context)
+        if (existing != null && existing.exists() && existing.length() > 1024 * 1024) {
+            downloadedFile = existing
+            isDownloadComplete = true
+        }
     }
 
     // Observe WorkManager for download progress
@@ -184,10 +180,15 @@ fun UpdateScreen(navController: NavHostController) {
                     }
                     WorkInfo.State.SUCCEEDED -> {
                         isDownloading = false
-                        isDownloadComplete = true
                         val filePath = workInfo.outputData.getString("file_path")
-                        if (filePath != null) {
-                            downloadedFile = File(filePath)
+                        val candidate = if (filePath != null) File(filePath) else null
+                        val resolved = (if (candidate?.exists() == true && candidate.length() > 1024 * 1024) candidate else null)
+                            ?: getLatestDownloadedApk(context)
+                        if (resolved != null) {
+                            downloadedFile = resolved
+                            isDownloadComplete = true
+                        } else {
+                            isDownloadComplete = false
                         }
                     }
                     WorkInfo.State.FAILED -> {
@@ -314,11 +315,20 @@ fun UpdateScreen(navController: NavHostController) {
                                     Button(
                                         onClick = {
                                             if (isDownloadComplete) {
-                                                val file = downloadedFile
-                                                if (file == null || !file.exists()) {
+                                                val file = (if (downloadedFile?.exists() == true && (downloadedFile?.length() ?: 0) > 1024 * 1024) downloadedFile else null)
+                                                    ?: getLatestDownloadedApk(context)
+                                                if (file == null || !file.exists() || file.length() < 1024 * 1024) {
+                                                    Toast.makeText(context, "Update file not found. Starting download...", Toast.LENGTH_SHORT).show()
                                                     isDownloadComplete = false
                                                     downloadedFile = null
                                                     downloadProgress = 0f
+                                                    val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/TideFlow.apk"
+                                                    val downloadRequest = OneTimeWorkRequestBuilder<UpdateDownloadWorker>()
+                                                        .setInputData(workDataOf("apk_url" to urlToDownload, "version" to currentStatus.version, "file_size" to currentStatus.size))
+                                                        .addTag("update_download")
+                                                        .build()
+                                                    WorkManager.getInstance(context).enqueueUniqueWork("update_download", ExistingWorkPolicy.REPLACE, downloadRequest)
+                                                    isDownloading = true
                                                     return@Button
                                                 }
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -343,17 +353,7 @@ fun UpdateScreen(navController: NavHostController) {
                                                         return@Button
                                                     }
                                                 }
-                                                try {
-                                                    val uri = FileProvider.getUriForFile(context, "${context.packageName}.FileProvider", file)
-                                                    val installIntent = Intent(Intent.ACTION_VIEW).apply {
-                                                        setDataAndType(uri, "application/vnd.android.package-archive")
-                                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                    }
-                                                    context.startActivity(installIntent)
-                                                } catch (e: Exception) {
-                                                    Toast.makeText(context, "Cannot launch installer: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                                                }
+                                                launchApkInstall(context, file)
                                             } else {
                                                 val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/TideFlow.apk"
                                                 val downloadRequest = OneTimeWorkRequestBuilder<UpdateDownloadWorker>()
@@ -1139,3 +1139,37 @@ fun RenderSDUIBlock(block: SDUIBlock, parentModifier: Modifier = Modifier) {
         }
     }
 }
+
+fun launchApkInstall(context: Context, file: File) {
+    try {
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.FileProvider", file)
+        val installIntent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+        }
+
+        val resolveInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.queryIntentActivities(
+                installIntent,
+                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong())
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY)
+        }
+
+        for (resolveInfo in resolveInfoList) {
+            val targetPkg = resolveInfo.activityInfo.packageName
+            context.grantUriPermission(targetPkg, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        context.startActivity(installIntent)
+    } catch (e: Exception) {
+        Log.e("TidelFlowUpdater", "Failed to launch installer", e)
+        Toast.makeText(context, "Cannot launch installer: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+    }
+}
+

@@ -5,6 +5,7 @@ import android.os.Environment
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.music.vivi.BuildConfig
 import com.music.vivi.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -42,12 +43,37 @@ class UpdateDownloadWorker(private val context: Context, workerParams: WorkerPar
         DownloadNotificationManager.showDownloadStarting(version, fileSize)
 
         try {
-            val url = URL(apkUrl)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-            connection.connectTimeout = 15000
-            connection.readTimeout = 15000
-            connection.connect()
+            var currentUrl = apkUrl
+            var connection: HttpURLConnection
+            var redirects = 0
+            val maxRedirects = 10
+
+            while (true) {
+                val url = URL(currentUrl)
+                connection = url.openConnection() as HttpURLConnection
+                connection.instanceFollowRedirects = true
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 30000
+                connection.readTimeout = 30000
+                connection.setRequestProperty("User-Agent", "TidelFlow/${BuildConfig.VERSION_NAME}")
+                connection.connect()
+
+                val responseCode = connection.responseCode
+                if (responseCode in 300..399) {
+                    val newLocation = connection.getHeaderField("Location")
+                    connection.disconnect()
+                    if (!newLocation.isNullOrBlank() && redirects < maxRedirects) {
+                        currentUrl = if (newLocation.startsWith("http://") || newLocation.startsWith("https://")) {
+                            newLocation
+                        } else {
+                            URL(url, newLocation).toString()
+                        }
+                        redirects++
+                        continue
+                    }
+                }
+                break
+            }
 
             if (connection.responseCode != HttpURLConnection.HTTP_OK) {
                 DownloadNotificationManager.showDownloadFailed(

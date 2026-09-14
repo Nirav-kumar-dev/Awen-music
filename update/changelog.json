@@ -1,30 +1,32 @@
 {
-  "version": "1.0.2",
-  "description": "TidelFlow 1.0.2 - Fixed In-App APK Updater Permissions, Consolidated FileProvider & Smooth Install Flow",
+  "version": "1.0.3",
+  "description": "TidelFlow 1.0.3 - Maximum Bugs Solved: In-App Installer Engine, 302 Redirect Fix, File Recovery & TidelFlow Branding",
   "changelog": [
     {
-      "title": "In-App Updater & APK Installation",
+      "title": "Critical In-App Installer Fixes",
       "items": [
-        "Added REQUEST_INSTALL_PACKAGES permission to AndroidManifest.xml, resolving in-app update installation failure on Android 8.0+.",
-        "Consolidated FileProvider authorities and paths, ensuring seamless URI resolution for downloaded update packages.",
-        "Added external-files-path and files-path support in provider_paths.xml.",
-        "Streamlined install flow with automatic installation launch as soon as 'Install unknown apps' permission is enabled."
+        "Fixed Install button failure: Resolved issue where GitHub release cross-host 302 redirects aborted downloads prematurely, ensuring the full 70MB APK is completely downloaded.",
+        "Automatic file discovery & recovery: The updater now actively detects pre-existing or completed APKs on disk, preventing empty state resets when tapping Install.",
+        "Bulletproof installation launch: Explicitly grants URI read permissions to system package installer packages and applies FLAG_ACTIVITY_CLEAR_TOP and EXTRA_NOT_UNKNOWN_SOURCE.",
+        "Smart retry on missing files: Tapping Install if a file is missing or corrupted automatically initiates a clean re-download instead of failing silently.",
+        "Complete TidelFlow branding: Fully updated updater titles, headers, and localized strings to 'TidelFlow' across all screens and notifications."
       ]
     },
     {
-      "title": "AI Assistant & Playlist Engine",
+      "title": "Permissions & FileProvider Architecture",
       "items": [
-        "Full AI playlist queueing with continuous YouTube Radio auto-continuation.",
-        "Guaranteed track novelty and intelligent non-repetition memory.",
-        "Dedicated persistent storage for AI agent memories and session history.",
-        "Powered by ultra-fast NVIDIA Nemotron 3.5 Lightning 30B."
+        "Enabled REQUEST_INSTALL_PACKAGES permission on Android 8.0+ through Android 16.",
+        "Consolidated FileProvider authorities (TidelFlow.FileProvider & fileprovider) into a unified provider, eliminating IllegalArgumentException errors.",
+        "Added <external-files-path> and <files-path> mapping in provider_paths.xml."
       ]
     },
     {
-      "title": "Core Improvements",
+      "title": "AI Playlist Engine & Performance",
       "items": [
-        "Non-blocking background YouTube Music synchronization.",
-        "Strict version check logic preventing spurious update notifications.",
+        "Seamless full playlist queueing with continuous YouTube Radio auto-playback.",
+        "Intelligent non-repetition memory with dedicated persistent storage.",
+        "Ultra-fast AI generation powered by NVIDIA Nemotron 3.5 Lightning 30B.",
+        "Completely non-blocking background YouTube Music synchronization.",
         "Full MIT License compliance."
       ]
     }

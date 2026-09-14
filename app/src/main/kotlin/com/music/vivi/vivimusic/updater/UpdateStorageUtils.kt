@@ -42,3 +42,19 @@ fun autoClearOldApks(context: Context) {
         file.isFile && file.name.endsWith(".apk", ignoreCase = true) && file.lastModified() < oneDayAgo
     }?.forEach { it.delete() }
 }
+
+fun getLatestDownloadedApk(context: Context): File? {
+    val dir = getDownloadedApksDir(context)
+    val defaultFile = File(dir, "vivi.apk")
+    if (defaultFile.exists() && defaultFile.length() > 1024 * 1024) {
+        return defaultFile
+    }
+    if (dir.exists() && dir.isDirectory) {
+        val apks = dir.listFiles { file ->
+            file.isFile && file.name.endsWith(".apk", ignoreCase = true) && file.length() > 1024 * 1024
+        }
+        return apks?.maxByOrNull { it.lastModified() }
+    }
+    return null
+}
+
