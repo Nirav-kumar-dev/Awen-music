@@ -1,33 +1,31 @@
 {
-  "version": "1.0.3",
-  "description": "TidelFlow 1.0.3 - Maximum Bugs Solved: In-App Installer Engine, 302 Redirect Fix, File Recovery & TidelFlow Branding",
+  "version": "1.0.4",
+  "description": "TidelFlow 1.0.4 - YouTube Music Speed Dial, Hybrid Recommendation Algorithm & Queue Continuity Fix",
   "changelog": [
     {
-      "title": "Critical In-App Installer Fixes",
+      "title": "YouTube Music Speed Dial",
       "items": [
-        "Fixed Install button failure: Resolved issue where GitHub release cross-host 302 redirects aborted downloads prematurely, ensuring the full 70MB APK is completely downloaded.",
-        "Automatic file discovery & recovery: The updater now actively detects pre-existing or completed APKs on disk, preventing empty state resets when tapping Install.",
-        "Bulletproof installation launch: Explicitly grants URI read permissions to system package installer packages and applies FLAG_ACTIVITY_CLEAR_TOP and EXTRA_NOT_UNKNOWN_SOURCE.",
-        "Smart retry on missing files: Tapping Install if a file is missing or corrupted automatically initiates a clean re-download instead of failing silently.",
-        "Complete TidelFlow branding: Fully updated updater titles, headers, and localized strings to 'TidelFlow' across all screens and notifications."
+        "Introduced full YouTube Music-style 3x3 Speed Dial grid on the Home screen.",
+        "Horizontal paging supporting up to 27 tracks, albums, artists, and playlists across 3 pages with animated page indicators.",
+        "Permanent pinning support: Pinned items stay anchored at the top of the Speed Dial with distinctive push-pin badges.",
+        "One-tap immediate playback: Start listening to any track directly from the dial without friction.",
+        "Automatic intelligent filling: Unpinned spots are dynamically populated by your listening history and personalized recommendations."
       ]
     },
     {
-      "title": "Permissions & FileProvider Architecture",
+      "title": "Hybrid Recommendation Intelligence",
       "items": [
-        "Enabled REQUEST_INSTALL_PACKAGES permission on Android 8.0+ through Android 16.",
-        "Consolidated FileProvider authorities (TidelFlow.FileProvider & fileprovider) into a unified provider, eliminating IllegalArgumentException errors.",
-        "Added <external-files-path> and <files-path> mapping in provider_paths.xml."
+        "Optimized previous local algorithm: Advanced affinity scoring leveraging play counts, completion rate, recency decay, and forgotten favorites.",
+        "New adaptive algorithm: Real-time dayparting awareness (Morning Uplift, Afternoon Energy, Evening Unwind, Nocturnal Flow) combined with multi-seed YouTube collaborative discovery.",
+        "Harmonious 50/50 hybrid mixer: Seamlessly interleaves beloved favorites with fresh sonic discoveries while enforcing artist diversity limits."
       ]
     },
     {
-      "title": "AI Playlist Engine & Performance",
+      "title": "Queue Continuity & Bug Fixes",
       "items": [
-        "Seamless full playlist queueing with continuous YouTube Radio auto-playback.",
-        "Intelligent non-repetition memory with dedicated persistent storage.",
-        "Ultra-fast AI generation powered by NVIDIA Nemotron 3.5 Lightning 30B.",
-        "Completely non-blocking background YouTube Music synchronization.",
-        "Full MIT License compliance."
+        "Fixed empty queue on Recently Played: Playing any track from Recently Played now automatically queues all subsequent tracks with seamless radio continuation.",
+        "Smooth active playing states and equalizer indicators on Speed Dial tiles.",
+        "Enhanced in-app update stability and MIT License alignment."
       ]
     }
   ]

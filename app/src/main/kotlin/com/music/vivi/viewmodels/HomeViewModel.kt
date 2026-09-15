@@ -48,6 +48,7 @@ import com.music.vivi.utils.SyncUtils
 import com.music.vivi.utils.dataStore
 import com.music.vivi.utils.get
 import com.music.vivi.utils.reportException
+import com.music.vivi.ai.UserAlgorithmEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -84,6 +85,7 @@ class HomeViewModel @Inject constructor(
     val syncUtils: SyncUtils,
     val wrappedManager: WrappedManager,
     private val wrappedAudioService: WrappedAudioService,
+    val userAlgorithmEngine: UserAlgorithmEngine,
 ) : ViewModel() {
     val isRefreshing = MutableStateFlow(false)
     val isLoading = MutableStateFlow(false)
@@ -114,8 +116,9 @@ class HomeViewModel @Inject constructor(
         combine(
             database.speedDialDao.getAll(),
             keepListening,
-            quickPicks
-        ) { pinned, keepListening, quick ->
+            quickPicks,
+            dailyDiscover
+        ) { pinned, keepListening, quick, daily ->
             val pinnedItems = pinned.map { it.toYTItem() }
             val filled = pinnedItems.toMutableList()
             val targetSize = 27
@@ -158,7 +161,7 @@ class HomeViewModel @Inject constructor(
             }
 
             if (filled.size < targetSize) {
-                // Quick Picks
+                // Hybrid Quick Picks (Optimized Old + New Adaptive Algo)
                 quick?.let { q ->
                     val needed = targetSize - filled.size
                     val available = q.filter { song ->
@@ -171,6 +174,17 @@ class HomeViewModel @Inject constructor(
                             thumbnail = song.thumbnailUrl ?: "",
                             explicit = false
                         )
+                    }
+                    filled.addAll(available.take(needed))
+                }
+            }
+
+            if (filled.size < targetSize) {
+                // Daily Discover fallbacks
+                daily?.let { d ->
+                    val needed = targetSize - filled.size
+                    val available = d.map { it.recommendation }.filter { rec ->
+                        filled.none { p -> p.id == rec.id }
                     }
                     filled.addAll(available.take(needed))
                 }
@@ -380,36 +394,18 @@ class HomeViewModel @Inject constructor(
         val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false)
         when (quickPicksEnum.first()) {
             QuickPicks.QUICK_PICKS -> {
-                val relatedSongs = database.quickPicks().first().filterVideoSongs(hideVideoSongs)
-                val forgotten = database.forgottenFavorites().first().filterVideoSongs(hideVideoSongs).take(8)
+                // 1. Compute Optimized Previous Algorithm (Enhanced Local Affinity & Recency)
+                val previousAlgoSongs = userAlgorithmEngine.computeOptimizedPreviousAlgo(hideVideoSongs, limit = 20)
+                
+                // 2. Compute New Adaptive Algorithm (Contextual Dayparting & YouTube Collaborative Discovery)
+                val newAlgoSongs = userAlgorithmEngine.computeNewAdaptiveAlgo(hideVideoSongs, limit = 20)
+                
+                // 3. Harmoniously Mix Both Algorithms (50/50 Interleaved Hybrid Engine)
+                val hybridSongs = userAlgorithmEngine.mixAlgos(previousAlgoSongs, newAlgoSongs, targetSize = 25)
 
-                // Get similar songs from YouTube based on recent listening
-                val recentSong = database.events().first().firstOrNull()?.song
-                val ytSimilarSongs = mutableListOf<Song>()
+                val fallbackSongs = database.quickPicks().first().filterVideoSongs(hideVideoSongs).shuffled().take(20)
 
-                if (recentSong != null) {
-                    val endpoint = YouTube.next(WatchEndpoint(videoId = recentSong.id)).getOrNull()?.relatedEndpoint
-                    if (endpoint != null) {
-                        YouTube.related(endpoint).onSuccess { page ->
-                            // Convert YouTube songs to local Song format if they exist in database
-                            page.songs.take(10).forEach { ytSong ->
-                                database.song(ytSong.id).first()?.let { localSong ->
-                                    if (!hideVideoSongs || !localSong.song.isVideo) {
-                                        ytSimilarSongs.add(localSong)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Combine all sources and remove duplicates
-                val combined = (relatedSongs + forgotten + ytSimilarSongs)
-                    .distinctBy { it.id }
-                    .shuffled()
-                    .take(20)
-
-                quickPicks.value = combined.ifEmpty { relatedSongs.shuffled().take(20) }
+                quickPicks.value = hybridSongs.ifEmpty { previousAlgoSongs }.ifEmpty { fallbackSongs }
             }
             QuickPicks.LAST_LISTEN -> {
                 val song = database.events().first().firstOrNull()?.song

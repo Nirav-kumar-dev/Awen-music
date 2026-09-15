@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -81,6 +83,7 @@ import com.music.vivi.playback.queues.LocalAlbumRadio
 import com.music.vivi.playback.queues.YouTubeAlbumRadio
 import com.music.vivi.playback.queues.YouTubeQueue
 import com.music.vivi.ui.component.HideOnScrollFAB
+import com.music.vivi.ui.component.SpeedDialGridItem
 import com.music.vivi.ui.component.VisionPlaylistBottomSheet
 import com.music.vivi.ui.component.NemotronAIBottomSheet
 import com.music.vivi.ui.component.LocalMenuState
@@ -163,6 +166,8 @@ fun NocturnalHomeContent(
     val allLocalItems by viewModel.allLocalItems.collectAsState()
     val allYtItems by viewModel.allYtItems.collectAsState()
     val accountImageUrl by viewModel.accountImageUrl.collectAsState()
+    val speedDialItems by viewModel.speedDialItems.collectAsState()
+    val pinnedSpeedDialItems by viewModel.pinnedSpeedDialItems.collectAsState()
 
     // Real recently played songs extracted directly from DB playback events
     val recentHistorySongs = remember(historyEvents) {
@@ -385,6 +390,55 @@ fun NocturnalHomeContent(
                     }
                 }
             } else {
+            // 2.5 Speed Dial (YouTube Music 3x3 Dynamic Grid with Paging & Pinning)
+            if (speedDialItems.isNotEmpty()) {
+                item(key = "premium_speed_dial") {
+                    PremiumSpeedDialSection(
+                        speedDialItems = speedDialItems,
+                        pinnedSpeedDialItems = pinnedSpeedDialItems,
+                        currentMetadataId = currentMetadata?.id,
+                        isPlaying = isPlaying,
+                        onItemClick = { item ->
+                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            when (item) {
+                                is SongItem -> {
+                                    if (item.id == currentMetadata?.id) {
+                                        playerConnection?.togglePlayPause()
+                                    } else {
+                                        playerConnection?.playQueue(
+                                            YouTubeQueue(
+                                                item.endpoint ?: WatchEndpoint(videoId = item.id),
+                                                item.toMediaMetadata()
+                                            )
+                                        )
+                                    }
+                                }
+                                is AlbumItem -> navController.navigate("album/${item.id}")
+                                is ArtistItem -> navController.navigate("artist/${item.id}")
+                                is PlaylistItem -> navController.navigate("online_playlist/${item.id}")
+                            }
+                        },
+                        onItemLongClick = { item ->
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            when (item) {
+                                is SongItem -> menuState.show {
+                                    YouTubeSongMenu(song = item, navController = navController, onDismiss = menuState::dismiss)
+                                }
+                                is AlbumItem -> menuState.show {
+                                    YouTubeAlbumMenu(albumItem = item, navController = navController, onDismiss = menuState::dismiss)
+                                }
+                                is ArtistItem -> menuState.show {
+                                    YouTubeArtistMenu(artist = item, onDismiss = menuState::dismiss)
+                                }
+                                is PlaylistItem -> menuState.show {
+                                    YouTubePlaylistMenu(playlist = item, coroutineScope = scope, onDismiss = menuState::dismiss)
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+
             // 3. Featured Hero Card ("Tonight's Feature" / "Daily Discover")
             item(key = "premium_tonight_feature") {
                 val featuredSong = dailyDiscover?.firstOrNull()?.recommendation as? SongItem
@@ -441,7 +495,15 @@ fun NocturnalHomeContent(
                             if (song.id == currentMetadata?.id) {
                                 playerConnection?.togglePlayPause()
                             } else {
-                                playerConnection?.playQueue(ListQueue(title = "Recently Played", items = listOf(song.toMediaItem())))
+                                val songIndex = recentlyPlayedToDisplay.indexOfFirst { it.id == song.id }.coerceAtLeast(0)
+                                playerConnection?.playQueue(
+                                    ListQueue(
+                                        title = "Recently Played",
+                                        items = recentlyPlayedToDisplay.map { it.toMediaItem() },
+                                        startIndex = songIndex,
+                                        isRadio = true
+                                    )
+                                )
                             }
                         },
                         onSongLongClick = { song ->
@@ -1822,3 +1884,96 @@ private fun PremiumYTItemCard(
         )
     }
 }
+
+// ============================================================================
+// SPEED DIAL SECTION (YOUTUBE MUSIC 3x3 DYNAMIC GRID WITH HORIZONTAL PAGING)
+// ============================================================================
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PremiumSpeedDialSection(
+    speedDialItems: List<YTItem>,
+    pinnedSpeedDialItems: List<com.music.vivi.db.entities.SpeedDialItem>,
+    currentMetadataId: String?,
+    isPlaying: Boolean,
+    onItemClick: (YTItem) -> Unit,
+    onItemLongClick: (YTItem) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (speedDialItems.isEmpty()) return
+
+    val totalItems = speedDialItems.take(27)
+    val pageCount = ((totalItems.size + 8) / 9).coerceIn(1, 3)
+    val pagerState = rememberPagerState(pageCount = { pageCount })
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        PremiumSectionHeader(
+            title = "Speed Dial",
+            subtitle = "QUICK PICKS & PINNED • 3x3",
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 12.dp)
+        )
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth()
+        ) { page ->
+            val pageItems = totalItems.drop(page * 9).take(9)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                for (row in 0 until 3) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        for (col in 0 until 3) {
+                            val itemIndex = row * 3 + col
+                            val item = pageItems.getOrNull(itemIndex)
+                            if (item != null) {
+                                val isPinned = pinnedSpeedDialItems.any { it.id == item.id }
+                                val isActive = currentMetadataId == item.id
+                                Box(modifier = Modifier.weight(1f)) {
+                                    SpeedDialGridItem(
+                                        item = item,
+                                        isPinned = isPinned,
+                                        isActive = isActive,
+                                        isPlaying = isPlaying && isActive,
+                                        onClick = { onItemClick(item) },
+                                        onLongClick = { onItemLongClick(item) }
+                                    )
+                                }
+                            } else {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Horizontal Pager Page Indicators (Dots)
+        if (pageCount > 1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(pageCount) { index ->
+                    val isSelected = pagerState.currentPage == index
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 3.5.dp)
+                            .size(if (isSelected) 7.dp else 5.dp)
+                            .clip(CircleShape)
+                            .background(if (isSelected) Color.White else Color.White.copy(alpha = 0.25f))
+                    )
+                }
+            }
+        }
+    }
+}
+

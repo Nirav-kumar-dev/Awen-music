@@ -1,31 +1,31 @@
 {
-  "version": "1.0.1",
-  "description": "TideFlow 1.0.1 - Smarter AI Playlists, Guaranteed Novelty, Non-Blocking YouTube Sync, MIT License & Updater Fixes",
+  "version": "1.0.4",
+  "description": "TidelFlow 1.0.4 - YouTube Music Speed Dial, Hybrid Recommendation Algorithm & Queue Continuity Fix",
   "changelog": [
     {
-      "title": "AI Assistant & Playlist Engine",
+      "title": "YouTube Music Speed Dial",
       "items": [
-        "Fixed playlist playback: Hitting 'Play' or tapping any song now queues and plays the entire AI playlist seamlessly instead of single isolated tracks.",
-        "Introduced AiPlaylistQueue with seamless YouTube Radio auto-continuation after playlist finishes.",
-        "Guaranteed fresh & new playlist on every request with intelligent non-repetition memory and randomized track selection.",
-        "Dedicated separate persistent JSON storage for AI agent memory, user listening preferences, and sessions.",
-        "Lightning-fast AI responses powered by NVIDIA Nemotron 3.5 Lightning 30B."
+        "Introduced full YouTube Music-style 3x3 Speed Dial grid on the Home screen.",
+        "Horizontal paging supporting up to 27 tracks, albums, artists, and playlists across 3 pages with animated page indicators.",
+        "Permanent pinning support: Pinned items stay anchored at the top of the Speed Dial with distinctive push-pin badges.",
+        "One-tap immediate playback: Start listening to any track directly from the dial without friction.",
+        "Automatic intelligent filling: Unpinned spots are dynamically populated by your listening history and personalized recommendations."
       ]
     },
     {
-      "title": "YouTube Music Synchronization",
+      "title": "Hybrid Recommendation Intelligence",
       "items": [
-        "Made YouTube Music sync completely non-blocking, eliminating thread contention and UI stalls.",
-        "Automatic background synchronization on startup and login.",
-        "Instant force sync trigger when toggled in Account Settings."
+        "Optimized previous local algorithm: Advanced affinity scoring leveraging play counts, completion rate, recency decay, and forgotten favorites.",
+        "New adaptive algorithm: Real-time dayparting awareness (Morning Uplift, Afternoon Energy, Evening Unwind, Nocturnal Flow) combined with multi-seed YouTube collaborative discovery.",
+        "Harmonious 50/50 hybrid mixer: Seamlessly interleaves beloved favorites with fresh sonic discoveries while enforcing artist diversity limits."
       ]
     },
     {
-      "title": "App Updater & Licensing",
+      "title": "Queue Continuity & Bug Fixes",
       "items": [
-        "Fixed updater version comparison: strictly requires release version to be newer than installed version, preventing false update notifications.",
-        "Changed project license to standard MIT License.",
-        "Updated branding and visual consistency across all screens."
+        "Fixed empty queue on Recently Played: Playing any track from Recently Played now automatically queues all subsequent tracks with seamless radio continuation.",
+        "Smooth active playing states and equalizer indicators on Speed Dial tiles.",
+        "Enhanced in-app update stability and MIT License alignment."
       ]
     }
   ]
