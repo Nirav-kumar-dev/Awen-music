@@ -65,9 +65,6 @@
 | :---: | :---: |
 | <img src="https://raw.githubusercontent.com/Nirav-kumar-dev/Awen-music/main/docs/assets/screen_ai.png" width="260" alt="Nemotron AI Assistant"/> | <img src="https://github.com/user-attachments/assets/36a91b09-e5bc-41f5-9624-22cf6da7ebda" width="260" alt="Home Screen"/> |
 
-| **Now Playing & Lyrics** | **Listen Together** |
-| :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/ff9bf8b6-16d8-4ced-be45-113629ee9d42" width="260" alt="Now Playing"/> | <img src="https://github.com/user-attachments/assets/b98efcae-8a23-4bd8-8ffc-e1ce5d32426b" width="260" alt="Listen Together"/> |
 
 </div>
 
