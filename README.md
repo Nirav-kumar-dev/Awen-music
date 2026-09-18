@@ -63,7 +63,7 @@
 
 | **Nemotron 3.5 AI Assistant** | **Obsidian Home Feed** |
 | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/Nirav-kumar-dev/Awen-music/main/docs/assets/screen_ai.png" width="260" alt="Nemotron AI Assistant"/> | <img src="https://github.com/user-attachments/assets/36a91b09-e5bc-41f5-9624-22cf6da7ebda" width="260" alt="Home Screen"/> |
+| <img src="https://raw.githubusercontent.com/Nirav-kumar-dev/Awen-music/main/docs/assets/screen_ai.png" width="260" alt="Nemotron AI Assistant"/> |  |
 
 
 </div>
