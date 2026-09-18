@@ -1,10 +1,10 @@
 /**
  * Awen Official Showcase & Real-Time GitHub Downloads Tracker
- * Repository: Nirav-kumar-dev/TideFlow
+ * Repository: Nirav-kumar-dev/Awen-music
  */
 
 const REPO_OWNER = 'Nirav-kumar-dev';
-const REPO_NAME = 'TideFlow';
+const REPO_NAME = 'Awen-music';
 const GITHUB_API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 
 // Interactive Mood Demo Data

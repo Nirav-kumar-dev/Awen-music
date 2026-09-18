@@ -3,13 +3,13 @@
 <div align="center">
 
 [![Live Website](https://img.shields.io/badge/Website-Awen%20Live-6366F1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://Nirav-kumar-dev.github.io/TideFlow/)
-[![GitHub release](https://img.shields.io/github/v/release/Nirav-kumar-dev/TideFlow?include_prereleases&style=for-the-badge&color=22C55E)](https://github.com/Nirav-kumar-dev/TideFlow/releases)
-[![GitHub downloads](https://img.shields.io/github/downloads/Nirav-kumar-dev/TideFlow/total?style=for-the-badge&color=3B82F6)](https://github.com/Nirav-kumar-dev/TideFlow/releases)
+[![GitHub release](https://img.shields.io/github/v/release/Nirav-kumar-dev/Awen-music?include_prereleases&style=for-the-badge&color=22C55E)](https://github.com/Nirav-kumar-dev/Awen-music/releases)
+[![GitHub downloads](https://img.shields.io/github/downloads/Nirav-kumar-dev/Awen-music/total?style=for-the-badge&color=3B82F6)](https://github.com/Nirav-kumar-dev/Awen-music/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 **An ultra-premium, AI-powered music streaming client for Android with obsidian dark mode, liquid glass aesthetics, NVIDIA Nemotron 3.5 intelligence, and automatic in-app updates.**
 
-[🌐 Visit Official Website](https://Nirav-kumar-dev.github.io/TideFlow/) • [📥 Download Latest APK (v1.0.4)](https://github.com/Nirav-kumar-dev/TideFlow/releases/latest) • [✨ Feature Request](https://github.com/Nirav-kumar-dev/TideFlow/issues)
+[🌐 Visit Official Website](https://Nirav-kumar-dev.github.io/TideFlow/) • [📥 Download Latest APK (v1.0.4)](https://github.com/Nirav-kumar-dev/Awen-music/releases/latest) • [✨ Feature Request](https://github.com/Nirav-kumar-dev/Awen-music/issues)
 
 </div>
 
@@ -63,7 +63,7 @@
 
 | **Nemotron 3.5 AI Assistant** | **Obsidian Home Feed** |
 | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/Nirav-kumar-dev/TideFlow/main/docs/assets/screen_ai.png" width="260" alt="Nemotron AI Assistant"/> | <img src="https://github.com/user-attachments/assets/36a91b09-e5bc-41f5-9624-22cf6da7ebda" width="260" alt="Home Screen"/> |
+| <img src="https://raw.githubusercontent.com/Nirav-kumar-dev/Awen-music/main/docs/assets/screen_ai.png" width="260" alt="Nemotron AI Assistant"/> | <img src="https://github.com/user-attachments/assets/36a91b09-e5bc-41f5-9624-22cf6da7ebda" width="260" alt="Home Screen"/> |
 
 | **Now Playing & Lyrics** | **Listen Together** |
 | :---: | :---: |
@@ -82,7 +82,7 @@ If you already have Awen installed, go to **Settings → Check for updates** or 
 Visit the official [Awen Website](https://Nirav-kumar-dev.github.io/TideFlow/) to grab the latest APK with one click.
 
 ### Option 3: GitHub Releases
-1. Head over to the [GitHub Releases](https://github.com/Nirav-kumar-dev/TideFlow/releases) page.
+1. Head over to the [GitHub Releases](https://github.com/Nirav-kumar-dev/Awen-music/releases) page.
 2. Under **Assets**, download `Awen.apk` (or `TideFlow.apk`).
 3. Open the APK on your Android device (allow *"Install unknown apps"* if prompted).
 4. Launch **Awen** and enjoy pure music streaming!
@@ -93,7 +93,7 @@ Visit the official [Awen Website](https://Nirav-kumar-dev.github.io/TideFlow/) t
 
 ```bash
 # Clone the repository
-git clone https://github.com/Nirav-kumar-dev/TideFlow.git
+git clone https://github.com/Nirav-kumar-dev/Awen-music.git
 cd TideFlow
 
 # Build ARM64 Debug APK with Gradle (Requires JDK 21)
@@ -108,7 +108,7 @@ cd TideFlow
 ## 🤝 Community & Support
 
 - **Official Website:** [https://Nirav-kumar-dev.github.io/TideFlow/](https://Nirav-kumar-dev.github.io/TideFlow/)
-- **GitHub Issues:** [Create an Issue or Feature Request](https://github.com/Nirav-kumar-dev/TideFlow/issues)
+- **GitHub Issues:** [Create an Issue or Feature Request](https://github.com/Nirav-kumar-dev/Awen-music/issues)
 
 ---
 
