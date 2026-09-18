@@ -59,7 +59,7 @@ class DiscordRPC(
         }
         if (button2Visible) {
             val resolvedText = resolveVariables(
-                button2Text.ifEmpty { "Visit TideFlow" },
+                button2Text.ifEmpty { "Visit Awen" },
                 song
             )
             buttonsList.add(resolvedText to "https://github.com/Nirav-kumar-dev/TideFlow")

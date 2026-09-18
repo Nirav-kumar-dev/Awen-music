@@ -116,6 +116,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <data android:scheme="awen" />
                 <data android:scheme="tideflow" />
                 <data android:host="listen" />
             </intent-filter>
@@ -127,6 +128,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <data android:scheme="awen" />
                 <data android:scheme="tideflow" />
                 <data android:host="oauth2callback" />
             </intent-filter>

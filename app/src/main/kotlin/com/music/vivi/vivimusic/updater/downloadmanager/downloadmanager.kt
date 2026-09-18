@@ -38,7 +38,7 @@ class CustomDownloadManager {
                     connection.requestMethod = "GET"
                     connection.connectTimeout = 30000
                     connection.readTimeout = 30000
-                    connection.setRequestProperty("User-Agent", "TidelFlow/${BuildConfig.VERSION_NAME}")
+                    connection.setRequestProperty("User-Agent", "Awen/${BuildConfig.VERSION_NAME}")
                     connection.connect()
 
                     val responseCode = connection.responseCode

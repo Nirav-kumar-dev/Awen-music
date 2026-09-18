@@ -199,7 +199,7 @@ fun NemotronAIBottomSheet(
 
                         Column {
                             Text(
-                                text = "TideFlow AI Assistant",
+                                text = "Awen AI Assistant",
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White

@@ -82,7 +82,7 @@ class AiAgentData {
 }
 
 object AiAgentStorage {
-    private const val FILE_NAME = "tideflow_ai_agent_store.json"
+    private const val FILE_NAME = "awen_ai_agent_store.json"
     private val lock = Any()
     private var cachedData: AiAgentData? = null
 
@@ -94,6 +94,15 @@ object AiAgentStorage {
             if (cachedData != null) return@withContext cachedData!!
             
             val file = File(context.filesDir, FILE_NAME)
+            if (!file.exists()) {
+                val legacyFile = File(context.filesDir, "tideflow_ai_agent_store.json")
+                if (legacyFile.exists()) {
+                    try {
+                        legacyFile.copyTo(file, overwrite = true)
+                    } catch (_: Exception) {}
+                }
+            }
+
             if (!file.exists()) {
                 val initial = createInitialAgentData()
                 saveInternal(context, initial)
@@ -303,7 +312,7 @@ object AiAgentStorage {
      * Generates a rich, structured prompt segment for the LLM based on stored agent knowledge
      */
     fun getAgentContextSystemPrompt(data: AiAgentData): String = buildString {
-        appendLine("=== TIDEFLOW AI AGENT KNOWLEDGE STORE & PERSISTENT MEMORY ===")
+        appendLine("=== AWEN AI AGENT KNOWLEDGE STORE & PERSISTENT MEMORY ===")
         val p = data.userProfile
         if (p.name.isNotBlank()) appendLine("• User Name: ${p.name}")
         if (p.username.isNotBlank()) appendLine("• User Handle: @${p.username}")

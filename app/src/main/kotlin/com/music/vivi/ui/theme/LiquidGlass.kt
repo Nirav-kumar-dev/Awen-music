@@ -1,5 +1,5 @@
 /**
- * TideFlow Project (C) 2026
+ * Awen Project (C) 2026
  * Liquid Glass UI Integration & Hardware-Accelerated Glassmorphism Utility
  */
 

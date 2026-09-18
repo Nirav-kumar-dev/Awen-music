@@ -1,5 +1,5 @@
 /**
- * TideFlow Official Showcase & Real-Time GitHub Downloads Tracker
+ * Awen Official Showcase & Real-Time GitHub Downloads Tracker
  * Repository: Nirav-kumar-dev/TideFlow
  */
 
@@ -230,7 +230,7 @@ function initInteractiveAIDemo() {
             title: `${moodName.charAt(0).toUpperCase() + moodName.slice(1)} Curation`,
             vibe: `Custom Nemotron 3.5 audio curation tuned to "${moodName}" with dynamic bass and melodic transitions.`,
             tracks: [
-                { num: 1, title: `${moodName} Theme`, artist: "TideFlow AI Sound" },
+                { num: 1, title: `${moodName} Theme`, artist: "Awen AI Sound" },
                 { num: 2, title: "Acoustic Resonance", artist: "Lo-Fi Collective" },
                 { num: 3, title: "Harmonic Pulse", artist: "Ambient Wave" },
                 { num: 4, title: "Drift Away", artist: "Nocturnal Studio" }

@@ -322,7 +322,7 @@ fun UpdateScreen(navController: NavHostController) {
                                                     isDownloadComplete = false
                                                     downloadedFile = null
                                                     downloadProgress = 0f
-                                                    val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/TideFlow.apk"
+                                                    val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/Awen.apk"
                                                     val downloadRequest = OneTimeWorkRequestBuilder<UpdateDownloadWorker>()
                                                         .setInputData(workDataOf("apk_url" to urlToDownload, "version" to currentStatus.version, "file_size" to currentStatus.size))
                                                         .addTag("update_download")
@@ -333,7 +333,7 @@ fun UpdateScreen(navController: NavHostController) {
                                                 }
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                                     if (!context.packageManager.canRequestPackageInstalls()) {
-                                                        Toast.makeText(context, "Please allow TideFlow to install unknown apps, then tap Install", Toast.LENGTH_LONG).show()
+                                                        Toast.makeText(context, "Please allow Awen to install unknown apps, then tap Install", Toast.LENGTH_LONG).show()
                                                         try {
                                                             val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
                                                                 data = Uri.parse("package:${context.packageName}")
@@ -355,7 +355,7 @@ fun UpdateScreen(navController: NavHostController) {
                                                 }
                                                 launchApkInstall(context, file)
                                             } else {
-                                                val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/TideFlow.apk"
+                                                val urlToDownload = currentStatus.apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/${currentStatus.version}/Awen.apk"
                                                 val downloadRequest = OneTimeWorkRequestBuilder<UpdateDownloadWorker>()
                                                     .setInputData(workDataOf("apk_url" to urlToDownload, "version" to currentStatus.version, "file_size" to currentStatus.size))
                                                     .addTag("update_download")
@@ -438,7 +438,7 @@ fun UpdateScreen(navController: NavHostController) {
                             else -> "V${rawVersion.uppercase()}"
                         }
                         Text(
-                            text = "TIDELFLOW $displayVer",
+                            text = "AWEN $displayVer",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground,
@@ -534,7 +534,7 @@ fun UpdateScreen(navController: NavHostController) {
                                             else -> "V${rawVersion.uppercase()}"
                                         }
                                         Text(
-                                            text = "TIDELFLOW VERSION $displayVer",
+                                            text = "AWEN VERSION $displayVer",
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onBackground
@@ -822,7 +822,7 @@ suspend fun checkForUpdate(
         try {
             val url = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/releases")
             val connection = url.openConnection() as HttpURLConnection
-            connection.setRequestProperty("User-Agent", "TideFlowApp")
+            connection.setRequestProperty("User-Agent", "AwenApp")
             connection.setRequestProperty("Accept", "application/vnd.github+json")
             val json = connection.inputStream.bufferedReader().use { it.readText() }
             val releases = JSONArray(json)
@@ -942,6 +942,7 @@ suspend fun checkForUpdate(
 
                             val isFlavorMatch = (BuildConfig.FLAVOR.contains("foss", ignoreCase = true) && assetName.contains("foss", ignoreCase = true)) ||
                                                 (BuildConfig.FLAVOR.contains("gms", ignoreCase = true) && assetName.contains("gms", ignoreCase = true)) ||
+                                                assetName.equals("Awen.apk", ignoreCase = true) ||
                                                 assetName.equals("TideFlow.apk", ignoreCase = true)
                             if (isFlavorMatch) {
                                 apkSizeInMB = sizeMB
@@ -1168,7 +1169,7 @@ fun launchApkInstall(context: Context, file: File) {
 
         context.startActivity(installIntent)
     } catch (e: Exception) {
-        Log.e("TidelFlowUpdater", "Failed to launch installer", e)
+        Log.e("AwenUpdater", "Failed to launch installer", e)
         Toast.makeText(context, "Cannot launch installer: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
     }
 }

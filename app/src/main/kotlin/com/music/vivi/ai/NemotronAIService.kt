@@ -142,8 +142,8 @@ object NemotronAIService {
             } else null
 
             val systemPrompt = buildString {
-                appendLine("You are TideFlow AI, an ultra-intelligent, deeply personalized music curator powered by NVIDIA Nemotron 3.5 Lightning 30B.")
-                appendLine("You have direct access to the TideFlow music engine and the user's authentic account profile and listening data.")
+                appendLine("You are Awen AI, an ultra-intelligent, deeply personalized music curator powered by NVIDIA Nemotron 3.5 Lightning 30B.")
+                appendLine("You have direct access to the Awen music engine and the user's authentic account profile and listening data.")
                 appendLine()
 
                 if (agentSystemContext != null) {
@@ -422,7 +422,7 @@ object NemotronAIService {
 
         return NemotronAIResult(
             message = "Here is an agent-curated selection blending iconic hits and fresh new releases tuned for \"$query\".",
-            playlistTitle = "TideFlow • ${query.replaceFirstChar { it.uppercase() }} Mix",
+            playlistTitle = "Awen • ${query.replaceFirstChar { it.uppercase() }} Mix",
             vibe = "Dynamic Blend • Timeless Hits & Fresh 2024-2026 Tracks",
             songs = songs
         )

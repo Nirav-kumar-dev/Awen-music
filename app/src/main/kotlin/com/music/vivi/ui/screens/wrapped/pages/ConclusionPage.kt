@@ -92,7 +92,7 @@ fun ConclusionPage(onClose: () -> Unit) {
                                 val canvas = android.graphics.Canvas(bitmap)
                                 view.draw(canvas)
                                 
-                                val uri = com.music.vivi.utils.ComposeToImage.saveBitmapAsFile(context, bitmap, "TideFlow_Wrapped")
+                                val uri = com.music.vivi.utils.ComposeToImage.saveBitmapAsFile(context, bitmap, "Awen_Wrapped")
                                 
                                 val shareIntent = android.content.Intent().apply {
                                     action = android.content.Intent.ACTION_SEND

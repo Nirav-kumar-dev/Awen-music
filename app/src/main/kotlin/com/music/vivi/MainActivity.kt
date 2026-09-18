@@ -571,7 +571,7 @@ class MainActivity : ComponentActivity() {
         ) {
             if (lastSeenStarPromptVersion != currentVersion && !hasStarredRepo && !isStarred) {
                 ActionPromptDialog(
-                    title = "Support TideFlow ⭐",
+                    title = "Support Awen ⭐",
                     onDismiss = { setLastSeenStarPromptVersion(currentVersion) },
                     onConfirm = {
                         setLastSeenStarPromptVersion(currentVersion)
@@ -586,7 +586,7 @@ class MainActivity : ComponentActivity() {
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = "If you enjoy using TideFlow, would you consider starring our repository on GitHub?",
+                                text = "If you enjoy using Awen, would you consider starring our repository on GitHub?",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -1424,7 +1424,7 @@ class MainActivity : ComponentActivity() {
         intent.data = null
         intent.removeExtra(Intent.EXTRA_TEXT)
 
-        if ((uri.scheme == "vivi" || uri.scheme == "tideflow") && (uri.host == "update" || uri.pathSegments.firstOrNull() == "update")) {
+        if ((uri.scheme == "vivi" || uri.scheme == "tideflow" || uri.scheme == "awen") && (uri.host == "update" || uri.pathSegments.firstOrNull() == "update")) {
             navController.navigate("update")
             return
         }

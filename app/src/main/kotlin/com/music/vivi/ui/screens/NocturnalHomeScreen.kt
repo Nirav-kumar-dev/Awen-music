@@ -1,5 +1,5 @@
 /**
- * TideFlow Project (C) 2026
+ * Awen Project (C) 2026
  * Licensed under GPL-3.0 | Ultra-Premium Dark Theme (Proton-Inspired & Settings-Unified)
  */
 
@@ -224,7 +224,7 @@ fun NocturnalHomeContent(
             ),
             modifier = Modifier.fillMaxSize()
         ) {
-            // 1. App Header (TideFlow brand + History + Settings + Avatar)
+            // 1. App Header (Awen brand + History + Settings + Avatar)
             item(key = "premium_header") {
                 PremiumAppHeader(
                     accountImageUrl = accountImageUrl,
@@ -819,7 +819,7 @@ fun NocturnalHomeContent(
 }
 
 // ============================================================================
-// 1. APP HEADER (TideFlow + History + Settings + Avatar)
+// 1. APP HEADER (Awen + History + Settings + Avatar)
 // ============================================================================
 @Composable
 private fun PremiumAppHeader(
@@ -856,7 +856,7 @@ private fun PremiumAppHeader(
             }
 
             Text(
-                text = "TideFlow",
+                text = "Awen",
                 fontFamily = FontFamily.SansSerif,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
@@ -1645,7 +1645,7 @@ private fun PremiumMadeForYouList(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = songItem.artists.joinToString(", ") { it.name }.ifBlank { "TideFlow Selection" },
+                            text = songItem.artists.joinToString(", ") { it.name }.ifBlank { "Awen Selection" },
                             color = PremiumTheme.TextSecondary,
                             fontSize = 12.sp,
                             maxLines = 1,

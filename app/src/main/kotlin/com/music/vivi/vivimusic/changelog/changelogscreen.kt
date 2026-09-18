@@ -141,7 +141,7 @@ fun ChangelogScreen(
                 } else {
                     val changelogUrl = URL("https://github.com/Nirav-kumar-dev/TideFlow/releases/download/$tag/changelog.json")
                     val connection = changelogUrl.openConnection() as HttpURLConnection
-                    connection.setRequestProperty("User-Agent", "TideFlowApp")
+                    connection.setRequestProperty("User-Agent", "AwenApp")
                     connection.setRequestProperty("Accept", "application/json")
                     
                     if (connection.responseCode == 200) {
@@ -195,7 +195,7 @@ fun ChangelogScreen(
                         // Fallback: fetch release details directly from GitHub API and parse body
                         val releaseApiUrl = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/releases/tags/$tag")
                         val apiConn = releaseApiUrl.openConnection() as HttpURLConnection
-                        apiConn.setRequestProperty("User-Agent", "TideFlowApp")
+                        apiConn.setRequestProperty("User-Agent", "AwenApp")
                         apiConn.setRequestProperty("Accept", "application/vnd.github+json")
                         if (apiConn.responseCode == 200) {
                             val relJson = apiConn.inputStream.bufferedReader().use { it.readText() }
@@ -251,7 +251,7 @@ fun ChangelogScreen(
             try {
                 val releasesUrl = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/releases")
                 val connection = releasesUrl.openConnection() as HttpURLConnection
-                connection.setRequestProperty("User-Agent", "TideFlowApp")
+                connection.setRequestProperty("User-Agent", "AwenApp")
                 connection.setRequestProperty("Accept", "application/vnd.github+json")
                 
                 if (connection.responseCode == 200) {

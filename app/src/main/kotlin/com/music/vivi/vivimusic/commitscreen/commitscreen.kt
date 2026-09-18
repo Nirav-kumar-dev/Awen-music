@@ -106,7 +106,7 @@ fun CommitScreen(
             try {
                 val url = URL("https://api.github.com/repos/Nirav-kumar-dev/TideFlow/commits?branch=main&per_page=50")
                 val connection = url.openConnection() as HttpURLConnection
-                connection.setRequestProperty("User-Agent", "TideFlowApp")
+                connection.setRequestProperty("User-Agent", "AwenApp")
                 connection.setRequestProperty("Accept", "application/vnd.github+json")
                 val json = connection.inputStream.bufferedReader().use { it.readText() }
                 val array = JSONArray(json)

@@ -41,7 +41,7 @@ object UpdateNotificationHelper {
             nm.createNotificationChannel(channel)
         }
 
-        val effectiveApkUrl = apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/$versionName/TideFlow.apk"
+        val effectiveApkUrl = apkUrl ?: "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/$versionName/Awen.apk"
 
         val openAppIntent = Intent(context, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
@@ -59,7 +59,7 @@ object UpdateNotificationHelper {
         val notif = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.vivimusicnotification)
             .setContentTitle("New Update Available: $versionName")
-            .setContentText("Tap to view changelog and update TideFlow")
+            .setContentText("Tap to view changelog and update Awen")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(openAppPendingIntent)
             .setAutoCancel(true)
@@ -83,6 +83,6 @@ object UpdateNotificationHelper {
     }
 
     fun showTestUpdateNotification(context: Context) {
-        showUpdateNotification(context, "v1.0.0", "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/v1.0.0/TideFlow.apk")
+        showUpdateNotification(context, "v1.0.0", "https://github.com/Nirav-kumar-dev/TideFlow/releases/download/v1.0.0/Awen.apk")
     }
 }
