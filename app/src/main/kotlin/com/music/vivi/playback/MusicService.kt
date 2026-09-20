@@ -3414,19 +3414,22 @@ class MusicService :
                 
                 val playbackUrl = freshPlayerResponse?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
                 val watchtimeUrl = freshPlayerResponse?.playbackTracking?.videostatsWatchtimeUrl?.baseUrl
+                val lengthSeconds = freshPlayerResponse?.videoDetails?.lengthSeconds?.toIntOrNull()
+                    ?: (mediaItem.metadata?.duration?.div(1000))
+                val playTimeSeconds = playbackStats.totalPlayTimeMs / 1000f
                 
                 playbackUrl?.let { baseUrl ->
-                    YouTube.registerPlayback(null, baseUrl)
-                        .onSuccess {
-                            // Also optionally ping watchtime to be absolutely sure the view registers
-                            watchtimeUrl?.let { wtUrl -> 
-                                YouTube.registerPlayback(null, wtUrl)
-                            }
-                            playbackRegistered.tryEmit(mediaItem.mediaId)
-                        }
-                        .onFailure {
-                            reportException(it)
-                        }
+                    YouTube.registerPlayback(
+                        playbackUrl = baseUrl,
+                        watchtimeUrl = watchtimeUrl,
+                        playlistId = null,
+                        contentLengthSeconds = lengthSeconds,
+                        playbackPositionSeconds = playTimeSeconds,
+                    ).onSuccess {
+                        playbackRegistered.tryEmit(mediaItem.mediaId)
+                    }.onFailure {
+                        reportException(it)
+                    }
                 }
             }
         }

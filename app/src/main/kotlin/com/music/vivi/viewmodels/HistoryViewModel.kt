@@ -197,6 +197,8 @@ constructor(
         .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    val isRefreshing = MutableStateFlow(false)
+
     init {
         fetchRemoteHistory()
         // Auto-clear remote history when user logs out
@@ -205,7 +207,9 @@ constructor(
                 .map { it[InnerTubeCookieKey] ?: "" }
                 .distinctUntilChanged()
                 .collect { cookie ->
-                    if ("SAPISID" !in parseCookieString(cookie)) {
+                    val cookieMap = parseCookieString(cookie)
+                    val hasSapisid = "SAPISID" in cookieMap || "__Secure-3PAPISID" in cookieMap || "__Secure-1PAPISID" in cookieMap
+                    if (!hasSapisid) {
                         historyPage.value = null
                         historySource.value = HistorySource.LOCAL
                     }
@@ -216,6 +220,7 @@ constructor(
     fun fetchRemoteHistory() {
         Timber.tag(TAG).d("[HistorySync] fetchRemoteHistory() called — requesting YouTube.musicHistory()")
         viewModelScope.launch(Dispatchers.IO) {
+            isRefreshing.value = true
             YouTube.musicHistory()
                 .onSuccess { page ->
                     val sections = page.sections.orEmpty()
@@ -226,10 +231,12 @@ constructor(
                         sectionCount, songCount
                     )
                     historyPage.value = page
+                    isRefreshing.value = false
                 }
                 .onFailure { err ->
                     Timber.tag(TAG).e(err, "[HistorySync] musicHistory() FAILED")
                     reportException(err)
+                    isRefreshing.value = false
                 }
         }
     }

@@ -69,6 +69,13 @@ import com.music.vivi.LocalPlayerConnection
 import com.music.vivi.R
 import com.music.vivi.constants.HistorySource
 import com.music.vivi.constants.InnerTubeCookieKey
+import com.music.vivi.constants.PreferredHistorySourceKey
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.ui.Alignment
 import com.music.vivi.extensions.metadata
 import com.music.vivi.extensions.toMediaItem
 import com.music.vivi.models.toMediaMetadata
@@ -150,8 +157,22 @@ fun HistoryScreen(
 
     val innerTubeCookie by rememberPreference(InnerTubeCookieKey, "")
     val isLoggedIn = remember(innerTubeCookie) {
-        "SAPISID" in parseCookieString(innerTubeCookie)
+        val map = parseCookieString(innerTubeCookie)
+        "SAPISID" in map || "__Secure-3PAPISID" in map || "__Secure-1PAPISID" in map
     }
+    val (preferredHistorySource, onPreferredHistorySourceChange) = rememberPreference(
+        PreferredHistorySourceKey,
+        HistorySource.LOCAL.name
+    )
+
+    LaunchedEffect(isLoggedIn, preferredHistorySource) {
+        if (isLoggedIn && preferredHistorySource == HistorySource.REMOTE.name) {
+            viewModel.historySource.value = HistorySource.REMOTE
+        } else if (!isLoggedIn) {
+            viewModel.historySource.value = HistorySource.LOCAL
+        }
+    }
+
     val keyboardController = LocalSoftwareKeyboardController.current
     fun dateAgoToString(dateAgo: DateAgo): String {
         return when (dateAgo) {
@@ -190,6 +211,59 @@ fun HistoryScreen(
                 )
             )
         ) {
+            if (isLoggedIn) {
+                item(key = "history_tabs") {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        FilterChip(
+                            selected = historySource == HistorySource.LOCAL,
+                            onClick = {
+                                viewModel.historySource.value = HistorySource.LOCAL
+                                onPreferredHistorySourceChange(HistorySource.LOCAL.name)
+                            },
+                            label = { Text("Local History") }
+                        )
+                        FilterChip(
+                            selected = historySource == HistorySource.REMOTE,
+                            onClick = {
+                                viewModel.historySource.value = HistorySource.REMOTE
+                                onPreferredHistorySourceChange(HistorySource.REMOTE.name)
+                                viewModel.fetchRemoteHistory()
+                            },
+                            label = { Text("YouTube Cloud") },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.globe_search),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        )
+                        if (historySource == HistorySource.REMOTE) {
+                            Spacer(modifier = Modifier.weight(1f))
+                            val isRefreshing by viewModel.isRefreshing.collectAsState()
+                            IconButton(
+                                onClick = { viewModel.fetchRemoteHistory() }
+                            ) {
+                                if (isRefreshing) {
+                                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.refresh),
+                                        contentDescription = "Refresh",
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             if (historySource == HistorySource.REMOTE && isLoggedIn) {
                 items(
@@ -490,17 +564,24 @@ fun HistoryScreen(
                                 }
                             }
                             IconButton(onClick = {
-                                val newSource = if (historySource == HistorySource.LOCAL) HistorySource.REMOTE else HistorySource.LOCAL
-                                viewModel.historySource.value = newSource
-                                if (newSource == HistorySource.REMOTE) {
-                                    viewModel.fetchRemoteHistory()
+                                if (!isLoggedIn) {
+                                    navController.navigate("login")
+                                } else {
+                                    val newSource = if (historySource == HistorySource.LOCAL) HistorySource.REMOTE else HistorySource.LOCAL
+                                    viewModel.historySource.value = newSource
+                                    onPreferredHistorySourceChange(newSource.name)
+                                    if (newSource == HistorySource.REMOTE) {
+                                        viewModel.fetchRemoteHistory()
+                                    }
                                 }
                             }) {
                                 Icon(
                                     painter = painterResource(
-                                        if (historySource == HistorySource.LOCAL) R.drawable.cloud_off_listentogether else R.drawable.globe_search
+                                        if (!isLoggedIn) R.drawable.cloud_off_listentogether
+                                        else if (historySource == HistorySource.LOCAL) R.drawable.cloud_off_listentogether
+                                        else R.drawable.globe_search
                                     ),
-                                    contentDescription = null
+                                    contentDescription = if (isLoggedIn) "Toggle Cloud History" else "Sign in to YouTube"
                                 )
                             }
                         }

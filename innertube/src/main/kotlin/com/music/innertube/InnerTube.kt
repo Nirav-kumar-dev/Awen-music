@@ -181,9 +181,10 @@ class InnerTube {
             if (setLogin && client.loginSupported) {
                 cookie?.let { cookie ->
                     append("cookie", cookie)
-                    if ("SAPISID" !in cookieMap) return@let
+                    val sapisid = cookieMap["SAPISID"] ?: cookieMap["__Secure-3PAPISID"] ?: cookieMap["__Secure-1PAPISID"]
+                    if (sapisid == null) return@let
                     val currentTime = System.currentTimeMillis() / 1000
-                    val sapisidHash = sha1("$currentTime ${cookieMap["SAPISID"]} ${YouTubeClient.ORIGIN_YOUTUBE_MUSIC}")
+                    val sapisidHash = sha1("$currentTime $sapisid ${YouTubeClient.ORIGIN_YOUTUBE_MUSIC}")
                     append("Authorization", "SAPISIDHASH ${currentTime}_${sapisidHash}")
                 }
             }
@@ -290,6 +291,32 @@ class InnerTube {
             parameter("c", client.clientName)
             parameter("cpn", cpn)
 
+            if (playlistId != null) {
+                parameter("list", playlistId)
+                parameter("referrer", "https://music.youtube.com/playlist?list=$playlistId")
+            }
+        }
+    }
+
+    suspend fun registerWatchtime(
+        url: String,
+        cpn: String,
+        playlistId: String?,
+        contentLengthSeconds: Int?,
+        playbackPositionSeconds: Float?,
+        client: YouTubeClient = YouTubeClient.WEB_REMIX,
+    ) = withRetry {
+        httpClient.get(url) {
+            ytClient(client, true)
+            parameter("ver", "2")
+            parameter("c", client.clientName)
+            parameter("cpn", cpn)
+            parameter("state", "playing")
+            val cmt = playbackPositionSeconds ?: 30f
+            parameter("cmt", "%.3f".format(java.util.Locale.US, cmt))
+            parameter("st", "0.000")
+            parameter("et", "%.3f".format(java.util.Locale.US, cmt))
+            contentLengthSeconds?.let { parameter("len", it.toString()) }
             if (playlistId != null) {
                 parameter("list", playlistId)
                 parameter("referrer", "https://music.youtube.com/playlist?list=$playlistId")
