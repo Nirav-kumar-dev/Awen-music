@@ -104,7 +104,7 @@ cd TideFlow
 
 ## 🤝 Community & Support
 
-- **Official Website:** [https://Nirav-kumar-dev.github.io/TideFlow/](https://Nirav-kumar-dev.github.io/Awen-music/)
+- **Official Website:** [https://Nirav-kumar-dev.github.io/Awen-music/](https://Nirav-kumar-dev.github.io/Awen-music/)
 - **GitHub Issues:** [Create an Issue or Feature Request](https://github.com/Nirav-kumar-dev/Awen-music/issues)
 
 ---
