@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Live Website](https://img.shields.io/badge/Website-Awen%20Live-6366F1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://Nirav-kumar-dev.github.io/TideFlow/)
+[![Live Website](https://img.shields.io/badge/Website-Awen%20Live-6366F1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://Nirav-kumar-dev.github.io/Awen-music/)
 [![GitHub release](https://img.shields.io/github/v/release/Nirav-kumar-dev/Awen-music?include_prereleases&style=for-the-badge&color=22C55E)](https://github.com/Nirav-kumar-dev/Awen-music/releases)
 [![GitHub downloads](https://img.shields.io/github/downloads/Nirav-kumar-dev/Awen-music/total?style=for-the-badge&color=3B82F6)](https://github.com/Nirav-kumar-dev/Awen-music/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
