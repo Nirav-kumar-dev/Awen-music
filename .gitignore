@@ -111,4 +111,5 @@ app/src/main/cpp/vibrafp/third_party/.build-fftw/
 # Temporary and scratch files
 scratch/
 test_let.kts
+danceclips/
 *.apk

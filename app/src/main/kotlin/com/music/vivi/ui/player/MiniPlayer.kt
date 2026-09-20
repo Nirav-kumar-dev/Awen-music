@@ -146,6 +146,7 @@ import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import com.music.vivi.ui.component.DancingGirlMascot
 import com.music.vivi.ui.component.Icon as MIcon
 
 /**
@@ -176,23 +177,45 @@ fun MiniPlayer(
     // Create stable progress state - doesn't cause recomposition on position changes
     val progressState = remember { ProgressState(positionState, durationState) }
 
-    if (useAppleMiniPlayer) {
-        AppleMiniPlayer(
-            progressState = progressState,
-            modifier = modifier
-        )
-    } else if (useNewMiniPlayerDesign) {
-        NewMiniPlayer(
-            progressState = progressState,
-            modifier = modifier
-        )
-    } else {
-        Box(modifier = modifier.fillMaxWidth()) {
-            LegacyMiniPlayer(
-                progressState = progressState,
-                modifier = Modifier.align(Alignment.Center)
-            )
+    val playerConnection = LocalPlayerConnection.current
+    val isPlaying by playerConnection?.isPlaying?.collectAsState() ?: remember { mutableStateOf(false) }
+    val castHandler = remember(playerConnection) {
+        try {
+            playerConnection?.service?.castConnectionHandler
+        } catch (e: Exception) {
+            null
         }
+    }
+    val castIsPlaying by castHandler?.castIsPlaying?.collectAsState() ?: remember { mutableStateOf(false) }
+    val isCasting by castHandler?.isCasting?.collectAsState() ?: remember { mutableStateOf(false) }
+    val effectiveIsPlaying = if (isCasting) castIsPlaying else isPlaying
+
+    Box(modifier = modifier.fillMaxWidth()) {
+        if (useAppleMiniPlayer) {
+            AppleMiniPlayer(
+                progressState = progressState,
+                modifier = Modifier
+            )
+        } else if (useNewMiniPlayerDesign) {
+            NewMiniPlayer(
+                progressState = progressState,
+                modifier = Modifier
+            )
+        } else {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                LegacyMiniPlayer(
+                    progressState = progressState,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+
+        DancingGirlMascot(
+            isPlaying = effectiveIsPlaying,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 68.dp, bottom = 6.dp)
+        )
     }
 }
 
