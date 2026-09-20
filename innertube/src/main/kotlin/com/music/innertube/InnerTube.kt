@@ -176,11 +176,12 @@ class InnerTube {
             append("X-YouTube-Client-Name", client.clientId /* Not a typo. The Client-Name header does contain the client id. */)
             append("X-YouTube-Client-Version", client.clientVersion)
             append("X-Origin", YouTubeClient.ORIGIN_YOUTUBE_MUSIC)
+            append("Origin", YouTubeClient.ORIGIN_YOUTUBE_MUSIC)
             append("Referer", YouTubeClient.REFERER_YOUTUBE_MUSIC)
             visitorData?.let { append("X-Goog-Visitor-Id", it) }
             if (setLogin && client.loginSupported) {
                 cookie?.let { cookie ->
-                    append("cookie", cookie)
+                    append("Cookie", cookie)
                     val sapisid = cookieMap["SAPISID"] ?: cookieMap["__Secure-3PAPISID"] ?: cookieMap["__Secure-1PAPISID"]
                     if (sapisid == null) return@let
                     val currentTime = System.currentTimeMillis() / 1000
@@ -287,8 +288,9 @@ class InnerTube {
     ) = withRetry {
         httpClient.get(url) {
             ytClient(client, true)
-            parameter("ver", "2")
-            parameter("c", client.clientName)
+            if (!url.contains("ver=")) parameter("ver", "2")
+            if (!url.contains("c=")) parameter("c", client.clientName)
+            if (!url.contains("cver=")) parameter("cver", client.clientVersion)
             parameter("cpn", cpn)
 
             if (playlistId != null) {
@@ -304,23 +306,40 @@ class InnerTube {
         playlistId: String?,
         contentLengthSeconds: Int?,
         playbackPositionSeconds: Float?,
+        startTimeSeconds: Float? = null,
+        endTimeSeconds: Float? = null,
+        state: String = "playing",
         client: YouTubeClient = YouTubeClient.WEB_REMIX,
     ) = withRetry {
         httpClient.get(url) {
             ytClient(client, true)
-            parameter("ver", "2")
-            parameter("c", client.clientName)
+            if (!url.contains("ver=")) parameter("ver", "2")
+            if (!url.contains("c=")) parameter("c", client.clientName)
+            if (!url.contains("cver=")) parameter("cver", client.clientVersion)
             parameter("cpn", cpn)
-            parameter("state", "playing")
-            val cmt = playbackPositionSeconds ?: 30f
+            parameter("state", state)
+            val cmt = playbackPositionSeconds ?: 0f
+            val st = startTimeSeconds ?: 0f
+            val et = endTimeSeconds ?: cmt
             parameter("cmt", "%.3f".format(java.util.Locale.US, cmt))
-            parameter("st", "0.000")
-            parameter("et", "%.3f".format(java.util.Locale.US, cmt))
+            parameter("st", "%.3f".format(java.util.Locale.US, st))
+            parameter("et", "%.3f".format(java.util.Locale.US, et))
             contentLengthSeconds?.let { parameter("len", it.toString()) }
             if (playlistId != null) {
                 parameter("list", playlistId)
                 parameter("referrer", "https://music.youtube.com/playlist?list=$playlistId")
             }
+        }
+    }
+
+    suspend fun registerAtr(
+        url: String,
+        cpn: String,
+        client: YouTubeClient = YouTubeClient.WEB_REMIX,
+    ) = withRetry {
+        httpClient.get(url) {
+            ytClient(client, true)
+            parameter("cpn", cpn)
         }
     }
 

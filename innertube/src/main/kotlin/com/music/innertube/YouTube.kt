@@ -1259,8 +1259,9 @@ object YouTube {
         playlistId: String? = null,
         contentLengthSeconds: Int? = null,
         playbackPositionSeconds: Float? = null,
+        cpn: String? = null,
     ) = runCatching {
-        val cpn = (1..16).map {
+        val sessionCpn = cpn ?: (1..16).map {
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"[Random.Default.nextInt(
                 0,
                 64
@@ -1270,18 +1271,47 @@ object YouTube {
         innerTube.registerPlayback(
             url = playbackUrl,
             playlistId = playlistId,
-            cpn = cpn
+            cpn = sessionCpn
         )
 
         if (watchtimeUrl != null) {
             innerTube.registerWatchtime(
                 url = watchtimeUrl,
-                cpn = cpn,
+                cpn = sessionCpn,
                 playlistId = playlistId,
                 contentLengthSeconds = contentLengthSeconds,
                 playbackPositionSeconds = playbackPositionSeconds
             )
         }
+    }
+
+    suspend fun registerWatchtime(
+        url: String,
+        cpn: String,
+        playlistId: String? = null,
+        contentLengthSeconds: Int? = null,
+        playbackPositionSeconds: Float? = null,
+        startTimeSeconds: Float? = null,
+        endTimeSeconds: Float? = null,
+        state: String = "playing",
+    ) = runCatching {
+        innerTube.registerWatchtime(
+            url = url,
+            cpn = cpn,
+            playlistId = playlistId,
+            contentLengthSeconds = contentLengthSeconds,
+            playbackPositionSeconds = playbackPositionSeconds,
+            startTimeSeconds = startTimeSeconds,
+            endTimeSeconds = endTimeSeconds,
+            state = state,
+        )
+    }
+
+    suspend fun registerAtr(
+        url: String,
+        cpn: String,
+    ) = runCatching {
+        innerTube.registerAtr(url, cpn)
     }
 
     suspend fun registerPlayback(playlistId: String? = null, playbackTracking: String) =

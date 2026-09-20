@@ -264,6 +264,8 @@ class MusicService :
     @Inject
     lateinit var listenTogetherManager: com.music.vivi.listentogether.ListenTogetherManager
 
+    private val youtubePlaybackTracker by lazy { YouTubePlaybackTracker(this) }
+
     private lateinit var audioManager: AudioManager
     private var audioFocusRequest: AudioFocusRequest? = null
     private var lastAudioFocusState = AudioManager.AUDIOFOCUS_NONE
@@ -2275,6 +2277,9 @@ class MusicService :
         if (player.playWhenReady && player.playbackState == Player.STATE_READY) {
             scrobbleManager?.onSongStart(player.currentMetadata, duration = player.duration)
         }
+        if (mediaItem != null && (player.isPlaying || player.playWhenReady)) {
+            youtubePlaybackTracker.onSongStarted(mediaItem.mediaId)
+        }
 
         // Sync Cast when media changes and Cast is connected
         // Skip if this change was triggered by Cast sync (to prevent loops)
@@ -2424,13 +2429,24 @@ class MusicService :
             player.currentMediaItem?.mediaId?.let { mediaId ->
                 resetRetryCount(mediaId)
                 Timber.tag(TAG).d("Playback successful for $mediaId, reset retry count")
+                if (player.playWhenReady) {
+                    youtubePlaybackTracker.onSongStarted(mediaId)
+                }
             }
             scheduleCrossfade()
         }
 
         if (playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED) {
             scrobbleManager?.onSongStop()
+            youtubePlaybackTracker.stopTracking(sendFinalPing = true)
         }
+    }
+
+    override fun onIsPlayingChanged(isPlaying: Boolean) {
+        if (isPlaying) {
+            player.currentMediaItem?.mediaId?.let { youtubePlaybackTracker.onSongStarted(it) }
+        }
+        youtubePlaybackTracker.onPlayPauseChanged(isPlaying)
     }
 
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
@@ -3512,6 +3528,7 @@ class MusicService :
 
     override fun onDestroy() {
         isRunning = false
+        youtubePlaybackTracker.release()
 
         try {
             unregisterReceiver(screenStateReceiver)
