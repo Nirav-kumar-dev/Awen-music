@@ -9,7 +9,7 @@
 
 **An ultra-premium, AI-powered music streaming client for Android with obsidian dark mode, liquid glass aesthetics, NVIDIA Nemotron 3.5 intelligence, and automatic in-app updates.**
 
-[🌐 Visit Official Website](https://Nirav-kumar-dev.github.io/TideFlow/) • [📥 Download Latest APK (v1.0.4)](https://github.com/Nirav-kumar-dev/Awen-music/releases/latest) • [✨ Feature Request](https://github.com/Nirav-kumar-dev/Awen-music/issues)
+[🌐 Visit Official Website](https://Nirav-kumar-dev.github.io/Awen-music/) • [📥 Download Latest APK (v1.0.4)](https://github.com/Nirav-kumar-dev/Awen-music/releases/latest) • [✨ Feature Request](https://github.com/Nirav-kumar-dev/Awen-music/issues)
 
 </div>
 
