@@ -1,31 +1,29 @@
 {
-  "version": "1.0.4",
-  "description": "Awen 1.0.4 - YouTube Music Speed Dial, Hybrid Recommendation Algorithm & Queue Continuity Fix",
+  "version": "1.0.5",
+  "description": "Awen 1.0.5 - Real-Time YouTube Cloud Sync, Obsidian Aesthetic & Mascot Player",
   "changelog": [
     {
-      "title": "YouTube Music Speed Dial",
+      "title": "Real-Time YouTube Cloud Playback Sync",
       "items": [
-        "Introduced full YouTube Music-style 3x3 Speed Dial grid on the Home screen.",
-        "Horizontal paging supporting up to 27 tracks, albums, artists, and playlists across 3 pages with animated page indicators.",
-        "Permanent pinning support: Pinned items stay anchored at the top of the Speed Dial with distinctive push-pin badges.",
-        "One-tap immediate playback: Start listening to any track directly from the dial without friction.",
-        "Automatic intelligent filling: Unpinned spots are dynamically populated by your listening history and personalized recommendations."
+        "Real-time watchtime synchronization directly with YouTube servers under your logged-in Google account.",
+        "Automatic background tracking feeds YouTube's recommendation algorithm with accurate playback duration and watch signals.",
+        "Continuous 10-second watchtime heartbeats with automatic state handling for play, pause, and track transitions."
       ]
     },
     {
-      "title": "Hybrid Recommendation Intelligence",
+      "title": "YouTube Cloud History Browsing",
       "items": [
-        "Optimized previous local algorithm: Advanced affinity scoring leveraging play counts, completion rate, recency decay, and forgotten favorites.",
-        "New adaptive algorithm: Real-time dayparting awareness (Morning Uplift, Afternoon Energy, Evening Unwind, Nocturnal Flow) combined with multi-seed YouTube collaborative discovery.",
-        "Harmonious 50/50 hybrid mixer: Seamlessly interleaves beloved favorites with fresh sonic discoveries while enforcing artist diversity limits."
+        "Toggle seamlessly between Local History and YouTube Cloud Watch History in the History screen.",
+        "Dedicated refresh button to query and fetch latest cloud watch records on demand.",
+        "Persists user preference automatically with zero disruption for logged-out users."
       ]
     },
     {
-      "title": "Queue Continuity & Bug Fixes",
+      "title": "Obsidian Crystal Aesthetic & Mascot Player",
       "items": [
-        "Fixed empty queue on Recently Played: Playing any track from Recently Played now automatically queues all subsequent tracks with seamless radio continuation.",
-        "Smooth active playing states and equalizer indicators on Speed Dial tiles.",
-        "Enhanced in-app update stability and MIT License alignment."
+        "New obsidian crystal app icon and brand emblem design.",
+        "Animated dancing girl mascot on the mini player that dances during playback, bounces on entrance, and pouts when paused.",
+        "Enhanced SAPISID authentication and Google cookie support."
       ]
     }
   ]

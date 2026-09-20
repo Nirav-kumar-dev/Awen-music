@@ -25,9 +25,9 @@ android {
         applicationId = "com.awen.music"
         minSdk = 26
         targetSdk = 37
-        versionCode = 5
+        versionCode = 6
         val betaVersionName = project.findProperty("betaVersionName") as String?
-        versionName = betaVersionName ?: "1.0.4"
+        versionName = betaVersionName ?: "1.0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
