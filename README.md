@@ -76,7 +76,7 @@
 If you already have Awen installed, go to **Settings → Check for updates** or tap the update notification to download and install new versions directly.
 
 ### Option 2: Official Website
-Visit the official [Awen Website](https://Nirav-kumar-dev.github.io/TideFlow/) to grab the latest APK with one click.
+Visit the official [Awen Website](https://Nirav-kumar-dev.github.io/Awen-music/) to grab the latest APK with one click.
 
 ### Option 3: GitHub Releases
 1. Head over to the [GitHub Releases](https://github.com/Nirav-kumar-dev/Awen-music/releases) page.
